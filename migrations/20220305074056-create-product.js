@@ -28,7 +28,11 @@ module.exports = {
         type: Sequelize.DECIMAL
       },
       category_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        reference:{
+          model:'Category',
+          key:'id'
+        }
       },
       returnable_product: {
         type: Sequelize.BOOLEAN

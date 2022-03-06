@@ -45,7 +45,6 @@ const productController ={
                  ,
                 {
                     model: Units,
-                    right: true ,
                     attributes:['name'],
                   
                     required: false, 
@@ -62,6 +61,10 @@ const productController ={
             }).catch((err)=>{
                 return next(err);
             })
+
+            console.log(exist);
+
+            //let result =await Product.findAll();
           
             res.json(exist);
             
@@ -82,6 +85,7 @@ const productController ={
         // if(req.body.sku){
         //     newSku=req.body.sku;
         // }
+        console.log(req.body);
         let product ={
             name:req.body.name,
             unit_id:req.body.unit_id,
@@ -313,8 +317,11 @@ const productController ={
                 
                 
             }).catch((err)=>{
+                console.log(err);
                 return next(err);
             })
+
+            console.log(exist);
           
             res.json(exist);
             
@@ -332,11 +339,7 @@ const productController ={
           
 
                 const serialExist = await  ProductSerialised.findAll({
-                    include:[ {
-                        model: ProductExperation,
-                       
-                    
-                    }]
+               
                 }).catch((err)=>{
                  
                     next(err);
@@ -349,20 +352,18 @@ const productController ={
            
                 const BatchExist = await ProductBatch.findAll({
                
-                    include:[
-                    {
-                        model: ProductExperation, 
-                    }
     
-                ], 
-                    required: false, 
+              
                     
                 }).catch((err)=>{
                  
                     next(err);
                 });
 
-                res.json({"serialNumber":serialExist,"batchNumber":BatchExist})
+               res.json({"serialNumber":serialExist,"batchNumber":BatchExist})
+
+
+
 
 
 

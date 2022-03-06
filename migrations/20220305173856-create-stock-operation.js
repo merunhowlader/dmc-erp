@@ -9,18 +9,30 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       from: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        reference:{
+          model:'Location',
+          key:'location_id'
+        }
       },
       to: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        reference:{
+          model:'Location',
+          key:'location_id'
+        }
       },
       reference: {
         type: Sequelize.STRING
       },
       createdBy: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        reference:{
+          model:'User',
+          key:'id'
+        }
       },
-      oprationType: {
+      operationType: {
         type: Sequelize.STRING
       },
       createdAt: {

@@ -9,13 +9,25 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       location_id_from: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        reference:{
+          model:'Location',
+          key:'location_id'
+        }
       },
       location_id_to: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        reference:{
+          model:'Location',
+          key:'location_id'
+        }
       },
       product_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        reference:{
+          model:'Product',
+          key:'product_id'
+        }
       },
       quantity: {
         type: Sequelize.DECIMAL

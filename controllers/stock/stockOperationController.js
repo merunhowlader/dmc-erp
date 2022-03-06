@@ -25,7 +25,7 @@ const stockOperationController ={
            to:req.body.to,
            reference:req.body.reference,
            createdBy:1,
-           operationType:"supply",
+           operationType:"transfer",
        }
 
        let formData={
@@ -33,7 +33,7 @@ const stockOperationController ={
            to:req.body.to,
            reference:req.body.reference,
            createdBy:1,
-           operationType:"supply",
+           operationType:"transfer",
            items:req.body.items
        }
 
@@ -93,7 +93,7 @@ const stockOperationController ={
                let itemData={
                    product_id:allTransactionsItems[i].product_id,
                    quantity:allTransactionsItems[i].amount,
-                   stockOperationId:newOperation.operation_Id
+                   stockOperationId:newOperation.operation_id
                }
               
                let newlyCreatedItem= await StockOperationItem.create(itemData,{transaction: t}).catch((err)=>{
@@ -913,7 +913,7 @@ const stockOperationController ={
                 let itemData={
                     product_id:allTransactionsItems[i].product_id,
                     quantity:allTransactionsItems[i].amount,
-                    stockOperationId:newOperation.operation_Id
+                    stockOperationId:newOperation.operation_id
                
                 }
                 allItem.push(itemData);
@@ -1091,6 +1091,8 @@ const stockOperationController ={
           if(!newOperation){
               next(new Error(' fast transaction error'));
           }
+
+          console.log(" operation new data return",newOperation)
           let allItem=[];
           let length=allTransactionsItems.length;
           let AllExixtBatchTo=[];
@@ -1102,7 +1104,7 @@ const stockOperationController ={
              let itemData={
                  product_id:allTransactionsItems[i].product_id,
                  quantity:allTransactionsItems[i].amount,
-                 stockOperationId:newOperation.operation_Id
+                 stockOperationId:newOperation.operation_id
             
              }
              allItem.push(itemData);

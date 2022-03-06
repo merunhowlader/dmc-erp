@@ -15,7 +15,11 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       item_operation_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        reference:{
+          model:'StockOperationItem',
+          key:'id'
+        }
       },
       createdAt: {
         allowNull: false,

@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      OperationTrackRecord.belongsTo(models.StockOperationItem,{
+        foreignKey:'item_operation_id',
+        constraints: false
+      })
     }
   }
   OperationTrackRecord.init({

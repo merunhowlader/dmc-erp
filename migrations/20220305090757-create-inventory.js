@@ -9,10 +9,18 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       location_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        reference:{
+          model:'Location',
+          key:'location_id'
+        }
       },
       product_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        reference:{
+          model:'Product',
+          key:'product_id'
+        }
       },
       quantity: {
         type: Sequelize.DECIMAL

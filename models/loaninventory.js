@@ -11,6 +11,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      LoanInventory.belongsTo(models.Product, { foreignKey: 'product_id',  constraints: false })
+      LoanInventory.belongsTo(models.Location, { foreignKey: 'location_id_from',  constraints: false })
+      LoanInventory.belongsTo(models.Location, { foreignKey: 'location_id_to',  constraints: false })
     }
   }
   LoanInventory.init({

@@ -10,6 +10,17 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+
+      RelatedOperation.belongsTo(models.StockOperation,{
+        foreignKey:'act_id',
+        as: 'act',
+        constraints: false
+      })
+
+      RelatedOperation.belongsTo(models.StockOperation,{
+        foreignKey:'react_id',
+        as: 'react',
+        constraints: false})
       // define association here
     }
   }

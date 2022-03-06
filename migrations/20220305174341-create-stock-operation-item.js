@@ -9,13 +9,21 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       product_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        reference:{
+          model:'Product',
+          key:'product_id'
+        }
       },
       quantity: {
         type: Sequelize.INTEGER
       },
       stockOperationId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        reference:{
+          model:'StockOperation',
+          key:'operation_id'
+        }
       },
       createdAt: {
         allowNull: false,

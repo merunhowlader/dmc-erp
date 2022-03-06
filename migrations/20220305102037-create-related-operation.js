@@ -9,13 +9,21 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       act_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        reference:{
+          model:'StockOperation',
+          key:'operation_id'
+        }
       },
       demand_operation: {
         type: Sequelize.STRING
       },
       react_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        reference:{
+          model:'StockOperation',
+          key:'operation_id'
+        }
       },
       demandStatus: {
         type: Sequelize.BOOLEAN

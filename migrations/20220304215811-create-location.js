@@ -12,7 +12,11 @@ module.exports = {
         type: Sequelize.STRING
       },
       type: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        reference:{
+          model:'LocationType',
+          key:'locationType_id'
+        }
       },
       parentLocation: {
         type: Sequelize.INTEGER,

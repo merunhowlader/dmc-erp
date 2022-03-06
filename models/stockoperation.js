@@ -11,18 +11,33 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      StockOperation.belongsTo(models.Location,{
+        foreignKey:'from',
+        as: 'From',
+        constraints: false
+      })
+      StockOperation.belongsTo(models.Location,{
+        foreignKey:'to',
+        as: 'To',
+        constraints: false
+      })
+      StockOperation.hasMany(models.StockOperationItem,{
+        foreignKey:'stockOperationId',
+        constraints: false
+      })
     }
   }
   StockOperation.init({
     operation_id:{
       type:DataTypes.INTEGER,
       primaryKey:true,
+      autoIncrement: true,
     },
     from: DataTypes.INTEGER,
     to: DataTypes.INTEGER,
     reference: DataTypes.STRING,
     createdBy: DataTypes.INTEGER,
-    oprationType: DataTypes.STRING
+    operationType: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'StockOperation',

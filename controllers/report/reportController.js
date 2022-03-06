@@ -13,6 +13,9 @@ const loginController ={
                 include:[ 
                    {
                     model:  Location ,
+                    include:{
+                        model:LocationType
+                    }
                    
               
                 
@@ -24,6 +27,9 @@ const loginController ={
                     
                  
                     model: Product,
+                    include:{
+                        model:Units
+                    }
                     
 
                 }
@@ -55,7 +61,7 @@ const loginController ={
             });
 
             const takenLoan = await  Location.findAll({
-                
+               
                 include:[ 
                    {
                     model:  LoanInventory ,
@@ -63,7 +69,11 @@ const loginController ={
                     include: 
                         {
                             
-                                model:  Product ,  
+                                model:  Product , 
+                                include:{
+                                    model:Units
+                                }
+                                 
                         }
                     
                    
@@ -83,10 +93,16 @@ const loginController ={
                     model: Inventory ,
                     include:[{
                         model: Product,
+                        include:{
+                            model:Units
+                        }
 
                     },
                     {
-                        model:Location
+                        model:Location,
+                        include:{
+                            model:LocationType
+                        }
                     }
                 
                 

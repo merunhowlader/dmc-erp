@@ -20,6 +20,21 @@ module.exports = (sequelize, DataTypes) => {
         as:'substore',
         constraints: false
       })
+      Location.hasMany(models.Inventory,{
+        foreignKey: 'location_id',
+        constraints: false
+      })
+      Location.hasMany(models.LoanInventory,{
+        foreignKey: 'location_id_from',
+        as:'from',
+        constraints: false 
+      })
+      Location.hasMany(models.LoanInventory,{
+        foreignKey: 'location_id_to',
+        as:'to', 
+        constraints: false
+      })
+      
     }
   }
   Location.init({
