@@ -1,14 +1,17 @@
 'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Units', {
-      unit_id: {
+    await queryInterface.createTable('Consumers', {
+      id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
       name: {
+        type: Sequelize.STRING
+      },
+      phone: {
         type: Sequelize.STRING
       },
       createdAt: {
@@ -19,24 +22,9 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    }).then(() => {
-      queryInterface.bulkInsert("Units", [{
-              name: "kg",
-          
-          },
-          {
-              name: "liter",
-              
-          },
-          {
-              name: "piece",
-             
-          },
-      ]);
-       });
-     
+    });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Units');
+    await queryInterface.dropTable('Consumers');
   }
 };

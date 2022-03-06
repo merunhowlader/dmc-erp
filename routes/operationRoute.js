@@ -16,6 +16,9 @@ operationRoute.get('/single/:id',stockOperationController.viewSingleOperation);
 operationRoute.post('/supply',stockOperationController.supply);
 
 operationRoute.post('/demand',stockOperationController.demand);
+operationRoute.post('/demandsupply',stockOperationController.demandSupply);
+operationRoute.post('/distribution',stockOperationController.distribution);
+
 
 
 

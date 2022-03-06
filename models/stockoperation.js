@@ -25,6 +25,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey:'stockOperationId',
         constraints: false
       })
+      StockOperation.hasOne(models.Distribution,{
+        foreignKey:'op_id',
+        constraints: false
+      })
     }
   }
   StockOperation.init({
