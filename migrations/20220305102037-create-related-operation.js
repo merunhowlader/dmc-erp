@@ -26,7 +26,7 @@ module.exports = {
         }
       },
       demandStatus: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,

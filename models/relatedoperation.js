@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
     act_id: DataTypes.INTEGER,
     demand_operation: DataTypes.STRING,
     react_id: DataTypes.INTEGER,
-    demandStatus: DataTypes.BOOLEAN
+    demandStatus: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'RelatedOperation',

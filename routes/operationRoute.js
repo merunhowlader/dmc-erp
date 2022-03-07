@@ -9,7 +9,7 @@ operationRoute.get('/',stockOperationController.stockOperation);
 
 operationRoute.post('/transfer',stockOperationController.transfer);
 operationRoute.post('/loan',stockOperationController.loan);
-operationRoute.post('/loanreturn',stockOperationController.loanReturn);
+operationRoute.post('/returnloan/',stockOperationController.loanReturn);
 
 operationRoute.get('/allinventory',stockOperationController.inventory);
 operationRoute.get('/single/:id',stockOperationController.viewSingleOperation);
@@ -18,6 +18,11 @@ operationRoute.post('/supply',stockOperationController.supply);
 operationRoute.post('/demand',stockOperationController.demand);
 operationRoute.post('/demandsupply',stockOperationController.demandSupply);
 operationRoute.post('/distribution',stockOperationController.distribution);
+operationRoute.post('/trash',stockOperationController.trash);
+
+operationRoute.get('/allrelatedview',stockOperationController.viewAllReleted);
+operationRoute.get('/singlerelatedview/:id',stockOperationController.viewSingleReleted);
+
 
 
 

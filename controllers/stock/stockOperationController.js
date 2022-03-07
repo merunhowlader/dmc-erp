@@ -134,6 +134,7 @@ const stockOperationController ={
                  
                 let itemBatch =allTransactionsItems[i].track_data;
                 const asyncRes = await Promise.all(itemBatch.map(async (d) => {
+                    console.log('check track id',d);
                 await OperationTrackRecord.create({track_id:d.track_id, quantity:d.quantity,item_operation_id:newlyCreatedItem.id},{transaction: t}).catch((err)=>{
                         next(err);
                      });
@@ -150,6 +151,7 @@ const stockOperationController ={
                 let itemSerial =allTransactionsItems[i].track_data;
   
                 const asyncSerialRes = await Promise.all(itemSerial.map(async (d) => {
+                    console.log('check track id',d);
   
                     await OperationTrackRecord.create({track_id:d.track_id, quantity:1,item_operation_id:newlyCreatedItem.id},{transaction: t}).catch((err)=>{
                         t.rollback()
@@ -238,7 +240,8 @@ const stockOperationController ={
             for(let j=0; j<AllExistSerialFrom[i].array.length ; j++){
                   let exist=AllExistSerialFrom[i].array[j];
 
-                  console.log('exist serial check',exist);
+                  console.log('exist serial check',allTransactionsItems[index].track_data[j].track_id);
+
       
                   let serialNumber=allTransactionsItems[index].track_data[j].track_id;
               
@@ -250,7 +253,7 @@ const stockOperationController ={
             
                     if(exist){   
 
-                        promises.push(ProductSerialised.update({ location_id:req.body.to},{ where: { serial_number: allTransactionsItems[i].track_data[j].track_id, product_id: allTransactionsItems[i].product_id,location_id:req.body.from},transaction: t}));
+                        promises.push(ProductSerialised.update({ location_id:req.body.to},{ where: { serial_number: serialNumber, product_id: productId,location_id:req.body.from},transaction: t}));
                         
               
                       }       
@@ -277,6 +280,7 @@ const stockOperationController ={
               let index=AllExixtBatchTo[i].index;
               for(let j=0; j<AllExixtBatchTo[i].array.length ; j++){
                 let exist=AllExixtBatchTo[i].array[j];
+                console.log('exist serial check',allTransactionsItems[index].track_data[j].track_id);
                 let batchNumber=allTransactionsItems[index].track_data[j].track_id;
                 let quantity=  allTransactionsItems[index].track_data[j].quantity ;
                 let productId= allTransactionsItems[index].product_id;
@@ -298,6 +302,8 @@ const stockOperationController ={
               }
 
           }
+
+          console.log("to this point");
      
          return  await Promise.all(promises)
 
@@ -305,7 +311,7 @@ const stockOperationController ={
             console.log("YAY");
             res.status(200).json('your operation was successfully done')
         }).catch(function (err) {
-            console.log("NO!!!");
+            console.log(err);
             next(new Error(' something happer in sypply error'));
         });
 
@@ -313,7 +319,7 @@ const stockOperationController ={
     async loan(req, res, next){
 
         
-        console.log('this is request form body',req.body);
+        console.log('this is request form body',req.body.items);
         
         //next('new error');
         //res.json(req.body);
@@ -396,7 +402,7 @@ const stockOperationController ={
                let itemData={
                    product_id:allTransactionsItems[i].product_id,
                    quantity:allTransactionsItems[i].amount,
-                   stockOperationId:newOperation.operation_Id
+                   stockOperationId:newOperation.operation_id
               
                }
                let newlyCreatedItem= await StockOperationItem.create(itemData,{transaction: t}).catch((err)=>{
@@ -409,7 +415,9 @@ const stockOperationController ={
                if(allTransactionsItems[i].count_type===2){
                  
                 let itemBatch =allTransactionsItems[i].track_data;
+                console.log('item batch test',itemBatch);
                const asyncRes = await Promise.all(itemBatch.map(async (d) => {
+                   console.log('batch track data',d);
                 await OperationTrackRecord.create({track_id:d.track_id, quantity:d.quantity,item_operation_id:newlyCreatedItem.id},{transaction: t}).catch((err)=>{
                     next(err);
                  });
@@ -429,6 +437,7 @@ const stockOperationController ={
                 let itemSerial =allTransactionsItems[i].track_data;
 
                 const asyncSerialRes = await Promise.all(itemSerial.map(async (d) => {
+                    console.log('batch track data',d);
                     await OperationTrackRecord.create({track_id:d.track_id, quantity:1,item_operation_id:newlyCreatedItem.id},{transaction: t}).catch((err)=>{
                         t.rollback()
                         next(err);
@@ -445,6 +454,8 @@ const stockOperationController ={
                  
               }
             }
+
+            console.log("to this point")
     
            
 
@@ -607,7 +618,7 @@ const stockOperationController ={
             to:req.body.to,
             reference:req.body.reference,
             createdBy:1,
-            operationType:"supply",
+            operationType:"returnLoan",
         }
 
         let formData={
@@ -615,7 +626,7 @@ const stockOperationController ={
             to:req.body.to,
             reference:req.body.reference,
             createdBy:1,
-            operationType:"supply",
+            operationType:"returnLoan",
             items:req.body.items
         }
 
@@ -664,7 +675,7 @@ const stockOperationController ={
             if(!newOperation){
                 next(new Error(' fast transaction error'));
             }
-            let allItem=[];
+           
             let length=allTransactionsItems.length;
             let AllExixtBatchTo=[];
   
@@ -676,10 +687,10 @@ const stockOperationController ={
                let itemData={
                    product_id:allTransactionsItems[i].product_id,
                    quantity:allTransactionsItems[i].amount,
-                   stockOperationId:newOperation.operation_Id
+                   stockOperationId:newOperation.operation_id
               
                }
-               allItem.push(itemData);
+              
                let newlyCreatedItem= await StockOperationItem.create(itemData,{transaction: t}).catch((err)=>{
                 t.rollback()
                 next(err);
@@ -736,10 +747,6 @@ const stockOperationController ={
              
             }
 
-
-            const allitem=await StockOperationItem.bulkCreate(allItem).catch((err)=>{
-                         next(err);
-                });
 
 
         
@@ -981,12 +988,12 @@ const stockOperationController ={
                 next(err);
                 })
 
-                console.log(newOperation.operation_Id);
+                console.log(newOperation.operation_id);
               
 
                
 
-             let newRelatedOperation=await RelatedOperation.create({act_id:newOperation.operation_id,demand_operation:mainOperationData.operationType},{transaction: t}).catch((err)=>{
+             let newRelatedOperation=await RelatedOperation.create({act_id:newOperation.operation_id,demand_operation:mainOperationData.operationType,demandStatus:"Requested"},{transaction: t}).catch((err)=>{
                     next(err);
                   })
 
@@ -1019,16 +1026,21 @@ const stockOperationController ={
     async demandSupply(req, res, next){
 
         let allTransactionsItems=[...req.body.items];
+        let mainOperationData ={
+            from:req.body.from,
+            to:req.body.to,
+            reference:req.body.reference,
+            createdBy:1,
+            operationType:"demandSupply",
+        }
+
+        if(!req.body.isCancled){
+
+        
 
       
 
-       let mainOperationData ={
-           from:req.body.from,
-           to:req.body.to,
-           reference:req.body.reference,
-           createdBy:1,
-           operationType:"demandSupply",
-       }
+      
 
        let formData={
            from:req.body.from,
@@ -1162,7 +1174,7 @@ const stockOperationController ={
 
             
                 console.log('merun ckeck this id',req.body.related_operation_id,newOperation);
-                    const newRelatedOperation=await RelatedOperation.update({react_id:newOperation.operation_Id,demandStatus:true},{where:{id:formData.related_operation_id,react_id:{[Op.is]: null }}} ).catch((err)=>{
+                    const newRelatedOperation=await RelatedOperation.update({react_id:newOperation.operation_Id,demandStatus:"Done"},{where:{id:formData.related_operation_id,react_id:{[Op.is]: null }}} ).catch((err)=>{
                         next(err);
                       })
                     console.log(newRelatedOperation);
@@ -1291,6 +1303,28 @@ const stockOperationController ={
             console.log("NO!!!");
             next(new Error(' something happer in sypply error'));
         });
+
+        }else{
+
+            await sequelize.transaction(async (t) => {
+                const newOperation = await StockOperation.create(mainOperationData,{transaction: t}).catch((err)=>{
+                    next(err);
+                });
+                const newRelatedOperation=await RelatedOperation.update({react_id:newOperation.operation_Id,demandStatus:"Cancle"},{where:{id:formData.related_operation_id,react_id:{[Op.is]: null }}} ).catch((err)=>{
+                    next(err);
+                  })
+
+            }).then(function (result) {
+                console.log("YAY");
+                res.status(200).json('your operation was successfully done')
+            }).catch(function (err) {
+                console.log("NO!!!");
+                next(new Error(' something happer in sypply error'));
+            });
+
+
+
+        }
 
     },
 
@@ -1648,6 +1682,273 @@ const stockOperationController ={
 
 
     },
+    async trash(req, res, next){
+
+        let allTransactionsItems=[...req.body.items];
+
+        console.log('this form items',allTransactionsItems);
+
+       let mainOperationData ={
+           from:req.body.from,
+           to:req.body.to,
+           reference:req.body.reference,
+           createdBy:1,
+           operationType:"trash",
+       }
+
+       let formData={
+           from:req.body.from,
+           to:req.body.to,
+           reference:req.body.reference,
+           createdBy:1,
+           operationType:"trash",
+           items:req.body.items
+       }
+
+
+
+
+           
+       const supplySchema=Joi.object({
+           from:Joi.number().integer().required(),
+           to:Joi.number().integer().disallow(Joi.ref('from')).required(),
+           reference: Joi.string().allow(""),
+           operationType:Joi.string().allow(""),
+           createdBy:Joi.number().integer().required(),
+           items: Joi.array().items(Joi.object().keys(
+               {product_id:Joi.number().integer().required(),
+                item_name:Joi.string(),
+                unit:Joi.string(),
+                amount:Joi.number().integer().required(),
+                count_type: Joi.number().integer().required(),
+                track_data:Joi.array().items(Joi.object().keys({
+                   track_id:Joi.string().required(),
+                   quantity:Joi.number().integer().required(),
+                }).when('count_type', { is: 0, then: Joi.optional(), otherwise: Joi.required() })
+                )
+               }).min(1)).required()
+          
+           
+
+       })
+
+       const {error} =supplySchema.validate(formData);
+
+      console.error('this is error message',error);
+
+       if(error) {
+           return next(error);
+       }
+
+
+
+        let t;
+        
+        await sequelize.transaction(async (t) => {
+            const newOperation = await StockOperation.create(mainOperationData,{transaction: t}).catch((err)=>{
+                next(err);
+            });
+            if(!newOperation){
+                next(new Error(' fast transaction error'));
+            }
+      
+            let length=allTransactionsItems.length;
+            let AllExixtBatchTo=[];
+
+          let AllExistSerialFrom=[];
+
+            for(let i=0; i<length;i++){
+               let itemData={
+                   product_id:allTransactionsItems[i].product_id,
+                   quantity:allTransactionsItems[i].amount,
+                   stockOperationId:newOperation.operation_id
+               }
+              
+               let newlyCreatedItem= await StockOperationItem.create(itemData,{transaction: t}).catch((err)=>{
+                t.rollback()
+                next(err);
+             });
+
+               if(allTransactionsItems[i].count_type===2){
+                 
+                let itemBatch =allTransactionsItems[i].track_data;
+                const asyncRes = await Promise.all(itemBatch.map(async (d) => {
+                await OperationTrackRecord.create({track_id:d.track_id, quantity:d.quantity,item_operation_id:newlyCreatedItem.id},{transaction: t}).catch((err)=>{
+                        next(err);
+                     });
+                const checkDataExistTo=await ProductBatch.findOne({where:{batch_number:d.track_id,location_id:req.body.to}}).catch((err)=>{
+                                       next(err);
+                           })
+                    return checkDataExistTo;
+                   }));
+               AllExixtBatchTo.push({index:i,array:asyncRes});    
+                 
+              }
+              if(allTransactionsItems[i].count_type===1){
+               
+                let itemSerial =allTransactionsItems[i].track_data;
+  
+                const asyncSerialRes = await Promise.all(itemSerial.map(async (d) => {
+  
+                    await OperationTrackRecord.create({track_id:d.track_id, quantity:1,item_operation_id:newlyCreatedItem.id},{transaction: t}).catch((err)=>{
+                        t.rollback()
+                        next(err);
+                     });
+  
+                    
+                    const checkDataExistTo=await ProductSerialised.findOne({where:{serial_number:d.track_id}}).catch((err)=>{
+                        t.rollback()
+                            next(err);
+                            })
+                 
+                     return checkDataExistTo;
+  
+                    }));
+                AllExistSerialFrom.push({index:i,array:asyncSerialRes});   
+              
+                 
+              }
+            
+
+
+
+            }
+
+      
+            
+            let promises = [];
+            let i=0;
+
+
+            
+
+      
+           
+
+            for ( i; i < allTransactionsItems.length ; i++) {
+                    let checkFrom= await Inventory.findOne({where:{ product_id: allTransactionsItems[i].product_id,location_id: req.body.from},transaction: t}).catch(err => {
+                        next(err);
+                    })
+                    let checkTo= await Inventory.findOne({where:{ product_id: allTransactionsItems[i].product_id,location_id: req.body.to},transaction: t}).catch(err => {
+                        next(err);
+                    })
+                    console.log('this is check value' ,checkFrom);
+
+                    if(checkFrom){
+                        promises.push(Inventory.update({ quantity:  sequelize.literal(`quantity - ${allTransactionsItems[i].amount}`)},{ where: { product_id: allTransactionsItems[i].product_id,location_id: req.body.from} ,transaction: t}));
+
+                    }else{
+                        promises.push( Inventory.create({ product_id: allTransactionsItems[i].product_id,location_id: req.body.from,quantity:-allTransactionsItems[i].amount},{transaction: t}))
+
+                    }
+                    if(checkTo){
+                        promises.push(Inventory.update({ quantity:  sequelize.literal(`quantity + ${allTransactionsItems[i].amount}`)},{ where: { product_id: allTransactionsItems[i].product_id,location_id: req.body.to},transaction: t }));
+
+                    }else{
+                        promises.push( Inventory.create({ product_id: allTransactionsItems[i].product_id,location_id: req.body.to,quantity:allTransactionsItems[i].amount},{transaction: t}))
+
+                    }
+
+                //    if(allTransactionsItems[i].count_type===1){
+                //         let trackItemsLength=allTransactionsItems[i].track_data.length;
+                //          for (let j =0 ; j<trackItemsLength ; j++){
+
+                //             console.log('seerail numbers',allTransactionsItems[i].track_data[j].track_id);
+                         
+
+                //           promises.push(ProductSerialised.update({ location_id:req.body.to},{ where: { serial_number: allTransactionsItems[i].track_data[j].track_id, product_id: allTransactionsItems[i].product_id,location_id:req.body.from}}));
+                         
+                        
+                //         }
+                     
+                //      }   
+           }
+
+           
+
+
+
+          
+           for(let i=0; i<AllExistSerialFrom.length; i++){
+         
+            let index=AllExistSerialFrom[i].index;
+
+
+            for(let j=0; j<AllExistSerialFrom[i].array.length ; j++){
+                  let exist=AllExistSerialFrom[i].array[j];
+
+                  console.log('exist serial check',exist);
+      
+                  let serialNumber=allTransactionsItems[index].track_data[j].track_id;
+              
+                  let productId= allTransactionsItems[index].product_id;
+                  let locationIdTo=req.body.to;
+                  let locationIdFrom=req.body.from;
+                  
+
+            
+                    if(exist){   
+
+                        promises.push(ProductSerialised.update({ location_id:locationIdTo},{ where: { serial_number: serialNumber, product_id: productId,location_id:locationIdFrom},transaction: t}));
+                        
+              
+                      }       
+                      else{
+
+                        //not found serial number for transfar in inventory
+
+                     
+                        //res.json("give valid Serial  id")
+                     
+                      }
+
+
+         
+                  
+                  
+
+            }
+
+        }
+
+          for(let i=0; i<AllExixtBatchTo.length; i++){
+         
+              let index=AllExixtBatchTo[i].index;
+              for(let j=0; j<AllExixtBatchTo[i].array.length ; j++){
+                let exist=AllExixtBatchTo[i].array[j];
+                let batchNumber=allTransactionsItems[index].track_data[j].track_id;
+                let quantity=  allTransactionsItems[index].track_data[j].quantity ;
+                let productId= allTransactionsItems[index].product_id;
+                let locationIdTo=req.body.to;
+                let locationIdFrom=req.body.from;
+                
+                 if(exist){   
+                     promises.push(ProductBatch.update({ quantity:sequelize.literal(`quantity + ${quantity}`)},{where:{batch_number:batchNumber, product_id: productId,location_id:locationIdTo},transaction: t}))
+        
+                 }       
+                 else{
+                    promises.push(ProductBatch.create({ batch_number: batchNumber, product_id: productId,location_id:locationIdTo,quantity:quantity},{transaction: t})); 
+                 }
+
+                 promises.push(ProductBatch.update({ quantity:sequelize.literal(`quantity - ${quantity}`)},{where:{batch_number:batchNumber, product_id: productId,location_id:locationIdFrom},transaction: t}))
+
+                
+
+              }
+
+          }
+     
+         return  await Promise.all(promises)
+
+        }).then(function (result) {
+            console.log("YAY");
+            res.status(200).json('your operation was successfully done')
+        }).catch(function (err) {
+            console.log(err);
+            next(new Error(' something happer in sypply error'));
+        });
+
+    },
 
     async stockOperation(req, res, next){
         try{
@@ -1768,7 +2069,168 @@ const stockOperationController ={
         }catch(err){
             next(err);
         }
-    }
+    },
+    async viewAllReleted(req, res, next){
+
+      
+        try{
+
+            const exist = await RelatedOperation.findAll({
+               
+                include: [{
+                    model: StockOperation ,
+                    as:'act',
+                    include:[
+                            {
+                                model: StockOperationItem,
+                                include:{
+                                    model:Product,
+                                    include:{
+                                        model: Units
+                                    }
+                                },
+                                
+                                required: false,     
+                            },
+                            {
+
+                                model:Location,
+                                attributes:['name'],
+                                as:'From'
+                                
+                                
+                            },{
+            
+                                model:Location,
+                                attributes:['name'],
+                                as:'To'
+                                
+                                
+                            }
+                        ],
+                           
+                        
+                            
+             
+                required: false,
+                    
+                },
+                {
+                    model: StockOperation ,
+                    as:'react',
+                    include: {
+                         model: StockOperationItem,
+                         include:{
+                            model:Product,
+                            include:{
+                                model: Units
+                            }
+                        },
+                         required: false,    
+
+                         }
+                    
+                    
+                }
+            
+            
+            ],
+            
+            });
+
+            if(!exist){
+                res.json("transaction not found")
+            }
+            res.json(exist);
+
+        }catch(err){
+            next(err);
+        }
+    },
+    async  viewSingleReleted(req, res, next){
+        let id = req.params.id;
+ 
+        try{
+
+            const exist = await RelatedOperation.findOne({
+               where: {id:id},
+                include: [{
+                    model: StockOperation ,
+                    as:'act',
+                    include:[
+                            {
+                                model: StockOperationItem,
+                                include:{
+                                    model:Product,
+                                    include:{
+                                        model: Units
+                                    }
+                                },
+                                
+                                required: false,     
+                            },
+                            {
+
+                                model:Location,
+                                attributes:['name'],
+                                as:'From'
+                                
+                                
+                            },{
+            
+                                model:Location,
+                                attributes:['name'],
+                                as:'To'
+                                
+                                
+                            }
+                        ],
+                           
+                        
+                            
+             
+                required: false,
+                    
+                },
+                {
+                    model: StockOperation ,
+                    as:'react',
+                    include: {
+                         model: StockOperationItem,
+                         include:{
+                            model:Product,
+                            include:{
+                                model: Units
+                            }
+                        },
+                         required: false,    
+
+                         }
+                    
+                    
+                }
+            
+            
+            ],
+            
+            });
+
+            if(!exist){
+                res.json("transaction not found")
+            }
+
+          
+
+
+            res.json(exist);
+
+        }catch(err){
+            next(err);
+        }
+      
+     },
+
+
 
    
 
