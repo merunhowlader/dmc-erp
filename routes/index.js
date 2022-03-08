@@ -12,6 +12,7 @@ import reportRoute from './reportRoute';
  router.post('/login',loginController.login);
 
  router.get('/me',auth,userController.me);
+ router.get('/users',userController.allUsers);
  router.post('/refresh',refreshController.refresh);
 
  router.post('/logout',auth,loginController.logout);

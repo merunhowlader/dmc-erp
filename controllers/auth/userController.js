@@ -26,6 +26,31 @@ const userController={
 
         }
 
+    },
+
+
+    async allUsers(req, res, next){
+
+        //logic
+        //console.log('user control')
+        try{
+            const user = await User.findAll().catch((err)=>{
+                return next(err);
+            })
+
+            if(!user){
+                return next(CustomErrorHandler.notFound());
+            }
+
+            res.json(user);
+
+
+        }catch(err){
+
+            return next(err);
+
+        }
+
     }
 
 

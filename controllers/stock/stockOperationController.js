@@ -1025,16 +1025,25 @@ const stockOperationController ={
     
     async demandSupply(req, res, next){
 
-        let allTransactionsItems=[...req.body.items];
-        let mainOperationData ={
-            from:req.body.from,
-            to:req.body.to,
-            reference:req.body.reference,
-            createdBy:1,
-            operationType:"demandSupply",
-        }
+        console.log("in demandSupply");
 
-        if(!req.body.isCancled){
+        
+       
+
+        console.log(req.body)
+
+        if(!req.body.isCancel){
+
+            let allTransactionsItems=[...req.body.items];
+            let mainOperationData ={
+                from:req.body.from,
+                to:req.body.to,
+                reference:req.body.reference,
+                createdBy:1,
+                operationType:"demandSupply",
+            }
+            
+
 
         
 
@@ -1047,8 +1056,8 @@ const stockOperationController ={
            to:req.body.to,
            reference:req.body.reference,
            createdBy:1,
-           related_operation_id:2,
-           operationType:"transfer",
+           related_operation_id:req.body.related_operation_id,
+           operationType:"DemandSupply",
            items:req.body.items
        }
 
@@ -1113,12 +1122,13 @@ const stockOperationController ={
                }
               
                let newlyCreatedItem= await StockOperationItem.create(itemData,{transaction: t}).catch((err)=>{
-                t.rollback()
                 next(err);
              });
 
-               if(allTransactionsItems[i].count_type===2){
-                 
+     
+
+               if(allTransactionsItems[i].count_type===2 && (allTransactionsItems[i].amount!==0||allTransactionsItems[i].amount!==NaN)){
+                console.log('this in count type 1 ')
                 let itemBatch =allTransactionsItems[i].track_data;
                 const asyncRes = await Promise.all(itemBatch.map(async (d) => {
                 await OperationTrackRecord.create({track_id:d.track_id, quantity:d.quantity,item_operation_id:newlyCreatedItem.id},{transaction: t}).catch((err)=>{
@@ -1132,20 +1142,20 @@ const stockOperationController ={
                AllExixtBatchTo.push({index:i,array:asyncRes});    
                  
               }
-              if(allTransactionsItems[i].count_type===1){
-               
+              if(allTransactionsItems[i].count_type===1 && (allTransactionsItems[i].amount!==0||allTransactionsItems[i].amount!==NaN)){
+                console.log('this in count type 1 ')
                 let itemSerial =allTransactionsItems[i].track_data;
   
                 const asyncSerialRes = await Promise.all(itemSerial.map(async (d) => {
   
                     await OperationTrackRecord.create({track_id:d.track_id, quantity:1,item_operation_id:newlyCreatedItem.id},{transaction: t}).catch((err)=>{
-                        t.rollback()
+            
                         next(err);
                      });
   
                     
                     const checkDataExistTo=await ProductSerialised.findOne({where:{serial_number:d.track_id}}).catch((err)=>{
-                        t.rollback()
+              
                             next(err);
                             })
                  
@@ -1173,8 +1183,8 @@ const stockOperationController ={
             //   })    
 
             
-                console.log('merun ckeck this id',req.body.related_operation_id,newOperation);
-                    const newRelatedOperation=await RelatedOperation.update({react_id:newOperation.operation_Id,demandStatus:"Done"},{where:{id:formData.related_operation_id,react_id:{[Op.is]: null }}} ).catch((err)=>{
+                // console.log('merun ckeck this id',req.body.related_operation_id,newOperation);
+                    const newRelatedOperation=await RelatedOperation.update({react_id:newOperation.operation_id,demandStatus:"Done"},{where:{id:formData.related_operation_id,react_id:{[Op.is]: null }},transaction: t} ).catch((err)=>{
                         next(err);
                       })
                     console.log(newRelatedOperation);
@@ -1306,27 +1316,73 @@ const stockOperationController ={
 
         }else{
 
+            console.log("is calcle bock")
+
+            let calncleOperationData ={
+                from:req.body.from,
+                to:req.body.to,
+                reference:req.body.reference,
+                createdBy:1,
+                operationType:"demandSupply",
+                releated_operation_id:req.body.releated_operation_id
+               
+            }
+
+            const cancleSchema=Joi.object({
+                from:Joi.number().integer().required(),
+                to:Joi.number().integer().disallow(Joi.ref('from')).required(),
+                reference: Joi.string().allow(""),
+                operationType:Joi.string().allow(""),
+                createdBy:Joi.number().integer().required(),
+                releated_operation_id:Joi.number().integer().required(),
+               
+                
+    
+            })
+
+            const {error} =cancleSchema.validate(calncleOperationData);
+
+            console.error('this is error message',error);
+      
+             if(error) {
+                 return next(error);
+             }
+      
+            let  releated_operation_id=req.body.releated_operation_id;
+    
+            console.log(releated_operation_id);
+    
             await sequelize.transaction(async (t) => {
-                const newOperation = await StockOperation.create(mainOperationData,{transaction: t}).catch((err)=>{
+                const newOperation = await StockOperation.create(calncleOperationData,{transaction: t}).catch((err)=>{
                     next(err);
                 });
-                const newRelatedOperation=await RelatedOperation.update({react_id:newOperation.operation_Id,demandStatus:"Cancle"},{where:{id:formData.related_operation_id,react_id:{[Op.is]: null }}} ).catch((err)=>{
-                    next(err);
-                  })
-
+    
+                   return await RelatedOperation.update({react_id:newOperation.operation_id,demandStatus:"rejected"},{where:{id:releated_operation_id,react_id:{[Op.is]: null }},transaction: t} ).catch((err)=>{
+                        next(err);
+                      })
+    
+                
+    
+    
+                
+                
+    
             }).then(function (result) {
                 console.log("YAY");
                 res.status(200).json('your operation was successfully done')
             }).catch(function (err) {
-                console.log("NO!!!");
+                console.log(err);
                 next(new Error(' something happer in sypply error'));
             });
+    
 
+     
 
 
         }
 
     },
+ 
 
     async viewSingleOperation(req, res, next){
        let id = req.params.id;
@@ -2218,9 +2274,6 @@ const stockOperationController ={
             if(!exist){
                 res.json("transaction not found")
             }
-
-          
-
 
             res.json(exist);
 

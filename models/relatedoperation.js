@@ -25,6 +25,11 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   RelatedOperation.init({
+    id:{
+      type:DataTypes.INTEGER,
+      primaryKey:true,
+      autoIncrement: true,
+    },
     act_id: DataTypes.INTEGER,
     demand_operation: DataTypes.STRING,
     react_id: DataTypes.INTEGER,
