@@ -18,10 +18,18 @@ module.exports = {
         type: Sequelize.STRING
       },
       department: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        reference:{
+          model:'Location',
+          key:'location_id'
+        }
       },
       role: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        reference:{
+          model:'Role',
+          key:'id'
+        }
       },
       password: {
         type: Sequelize.STRING

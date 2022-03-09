@@ -2,36 +2,62 @@ import Joi from 'joi';
 import {User} from './../../models';
 import CustomErrorHandler from './../../services/CustomErrorHandler';
 import JwtService from './../../services/JwtService';
-import { Product,Units,Location,LocationType,sequelize ,Sequelize,StockOperationItem,Inventory,RelatedOperation,LoanInventory,ProductSerialised,ProductBatch} from '../../models';
+import { Product,Distribution,Consumer,Units,Location,LocationType,sequelize ,Sequelize,StockOperation,OperationTrackRecord,StockOperationItem,Inventory,RelatedOperation,LoanInventory,ProductSerialised,ProductBatch} from '../../models';
+const { Op } = Sequelize;
 const loginController ={
 
     
     async myInventory (req, res, next) {
 
         try{
-            const result = await LoanInventory.findAll({
+            
+
+            const Loan = await  Location.findAll({
+                
                 include:[ 
                    {
-                    model:  Location ,
-                    include:{
-                        model:LocationType
+                    model:  LoanInventory ,
+                    as:'from',
+                    include:[
+                        {
+                            
+                                model:  Product ,
+                                include:{
+                                    model:Units
+                                }  
+                        },
+                        {
+                            
+                            model:  Location ,
+                            
                     }
-                   
-              
+                    
+                    
+                    ]
                 
                 },
-
-                
                 {
-
+                    model:  LoanInventory ,
+                    as:'to',
+                    include: [
+                        {
+                            
+                                model:  Product , 
+                                include:{
+                                    model:Units
+                                }
+                                 
+                        },
                     
-                 
-                    model: Product,
-                    include:{
-                        model:Units
+                        {
+                            
+                            model:  Location ,
+                            
                     }
                     
-
+                    ]
+              
+                
                 }
             
             ]
@@ -40,52 +66,7 @@ const loginController ={
                 next(err);
             });
 
-            const givenLoan = await  Location.findAll({
-                
-                include:[ 
-                   {
-                    model:  LoanInventory ,
-                    as:'from',
-                    include: 
-                        {
-                            
-                                model:  Product ,  
-                        }
-                
-                },
-            
-            ]
-            }).catch((err)=>{
-             
-                next(err);
-            });
-
-            const takenLoan = await  Location.findAll({
-               
-                include:[ 
-                   {
-                    model:  LoanInventory ,
-                    as:'to',
-                    include: 
-                        {
-                            
-                                model:  Product , 
-                                include:{
-                                    model:Units
-                                }
-                                 
-                        }
-                    
-                   
-              
-                
-                },
-            
-            ]
-            }).catch((err)=>{
-             
-                next(err);
-            });
+           
 
             const inventory = await  Location.findAll({
                 include:[ 
@@ -116,8 +97,45 @@ const loginController ={
                 next(err);
             });
 
+            const ReturnAbleProductInventory = await  Product.findAll({
+                where: {returnable_product:true},
+                include:[ 
+                   {
+                    where: {quantity:{[Op.gt]: 0}},
+                    model: Inventory ,
+
+                    include:{
+                        model: Location
+                    }
+                   },
+                   {
+                        model:Units,
+                      
+                    },
+                    {
+                        model:Location
+
+                    }
+                
+                
+                ]
+                
+                
+            
+            
+            }).catch((err)=>{
+             
+                next(err);
+            });
+
+
+            if(inventory&&Loan&&ReturnAbleProductInventory){
+
+                res.json({inventory:inventory,loan:Loan,returnAbleProductInventory:ReturnAbleProductInventory})
+
+            }
+
            
-                res.json({loan:result,givenLoan:givenLoan,takenLoan:takenLoan ,inventory:inventory})
 
             
     
@@ -135,6 +153,39 @@ const loginController ={
 
 
 
+    },
+    async AllDistribution (req, res, next) {
+        let allDistribution = await Distribution.findAll({
+            include:[
+               {
+                model:StockOperation,
+                include:{
+                    model:StockOperationItem,
+                    include:{
+                        model:OperationTrackRecord
+
+                    }
+                }
+               },
+               {
+                   model:Consumer
+               }
+            ]
+        },
+            
+        );
+        if(allDistribution){
+            res.json(allDistribution);
+
+        }
+
+
+       
+    },
+    async AllConsumer (req, res, next) {
+        let allConsumer = await Consumer.findAll();
+        res.json(allConsumer);
+       
     },
      
     async monthlyTransaction (req, res, next) {

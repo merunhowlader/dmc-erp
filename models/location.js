@@ -34,6 +34,11 @@ module.exports = (sequelize, DataTypes) => {
         as:'to', 
         constraints: false
       })
+      Location.hasMany(models.Product,{
+        foreignKey: 'root',
+        constraints: false
+      })
+      
       
     }
   }

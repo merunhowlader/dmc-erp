@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { Product,Units,Location,LocationType,sequelize ,Sequelize,StockOperation,StockOperationItem,Inventory,RelatedOperation,LoanInventory,ProductSerialised,ProductBatch, OperationTrackRecord} from '../../models';
+import { Product,Consumer,Distribution,Units,Location,LocationType,sequelize ,Sequelize,StockOperation,StockOperationItem,Inventory,RelatedOperation,LoanInventory,ProductSerialised,ProductBatch, OperationTrackRecord} from '../../models';
 import CustomErrorHandler from '../../services/CustomErrorHandler';
 
 import bodyValidation from '../../services/operation/bodyValidation';
@@ -17,6 +17,7 @@ const stockOperationController ={
     ,
     async distribution(req, res, next){
         let allTransactionsItems=[...req.body.items];
+        console.log('distribution');
 
         console.log('this form items',allTransactionsItems);
 
@@ -25,21 +26,272 @@ const stockOperationController ={
            to:req.body.to,
            reference:req.body.reference,
            createdBy:1,
-           operationType:"transfer",
+           operationType:"Distribution",
+       }
+
+       let consumer={
+           name:req.body.name,
+           phone:req.body.phone,
+           total:req.body.total
        }
 
        let formData={
            from:req.body.from,
            to:req.body.to,
            reference:req.body.reference,
+           phone:req.body.phone,
            createdBy:1,
-           operationType:"transfer",
+           operationType:"Distribution",
            items:req.body.items
        }
 
-       let error=bodyValidation.distribution(formData);
-       console.log(error);
-       res.json({"error":error})
+       const supplySchema=Joi.object({
+        from:Joi.number().integer().required(),
+        to:Joi.number().integer().disallow(Joi.ref('from')).required(),
+        reference: Joi.string().allow(""),
+        phone:Joi.number().required(),
+        operationType:Joi.string().allow(""),
+        createdBy:Joi.number().integer().required(),
+        items: Joi.array().items(Joi.object().keys(
+            {product_id:Joi.number().integer().required(),
+             item_name:Joi.string(),
+             unit:Joi.string(),
+             amount:Joi.number().integer().required(),
+             count_type: Joi.number().integer().required(),
+             track_data:Joi.array().items(Joi.object().keys({
+                track_id:Joi.string().required(),
+                quantity:Joi.number().integer().required(),
+             }).when('count_type', { is: 0, then: Joi.optional(), otherwise: Joi.required() })
+             )
+            }).min(1)).required()
+       
+        
+
+    })
+
+       const {error} =supplySchema.validate(formData);
+
+       if(error) {
+        return next(error);
+    }
+
+       await sequelize.transaction(async (t) => {
+        const newOperation = await StockOperation.create(mainOperationData,{transaction: t}).catch((err)=>{
+            next(err);
+        });
+        if(!newOperation){
+            next(new Error(' fast transaction error'));
+        }
+  
+        let length=allTransactionsItems.length;
+        let AllExixtBatchTo=[];
+
+      let AllExistSerialFrom=[];
+
+        for(let i=0; i<length;i++){
+           let itemData={
+               product_id:allTransactionsItems[i].product_id,
+               quantity:allTransactionsItems[i].amount,
+               stockOperationId:newOperation.operation_id
+           }
+          
+           let newlyCreatedItem= await StockOperationItem.create(itemData,{transaction: t}).catch((err)=>{
+            t.rollback()
+            next(err);
+         });
+
+           if(allTransactionsItems[i].count_type===2){
+             
+            let itemBatch =allTransactionsItems[i].track_data;
+            const asyncRes = await Promise.all(itemBatch.map(async (d) => {
+                console.log('check track id',d);
+            await OperationTrackRecord.create({track_id:d.track_id, quantity:d.quantity,item_operation_id:newlyCreatedItem.id},{transaction: t}).catch((err)=>{
+                    next(err);
+                 });
+            const checkDataExistTo=await ProductBatch.findOne({where:{batch_number:d.track_id,location_id:req.body.to}}).catch((err)=>{
+                                   next(err);
+                       })
+                return checkDataExistTo;
+               }));
+           AllExixtBatchTo.push({index:i,array:asyncRes});    
+             
+          }
+          if(allTransactionsItems[i].count_type===1){
+           
+            let itemSerial =allTransactionsItems[i].track_data;
+
+            const asyncSerialRes = await Promise.all(itemSerial.map(async (d) => {
+                console.log('check track id',d);
+
+                await OperationTrackRecord.create({track_id:d.track_id, quantity:1,item_operation_id:newlyCreatedItem.id},{transaction: t}).catch((err)=>{
+                    t.rollback()
+                    next(err);
+                 });
+
+                
+                const checkDataExistTo=await ProductSerialised.findOne({where:{serial_number:d.track_id}}).catch((err)=>{
+                    t.rollback()
+                        next(err);
+                        })
+             
+                 return checkDataExistTo;
+
+                }));
+            AllExistSerialFrom.push({index:i,array:asyncSerialRes});   
+          
+             
+          }
+        
+
+
+
+        }
+
+  
+        
+        let promises = [];
+        let i=0;
+
+
+        
+
+  
+       
+
+        for ( i; i < allTransactionsItems.length ; i++) {
+                let checkFrom= await Inventory.findOne({where:{ product_id: allTransactionsItems[i].product_id,location_id: req.body.from}}).catch(err => {
+                    next(err);
+                })
+                let checkTo= await Inventory.findOne({where:{ product_id: allTransactionsItems[i].product_id,location_id: req.body.to}}).catch(err => {
+                    next(err);
+                })
+                console.log('this is check value' ,checkFrom);
+
+                if(checkFrom){
+                    promises.push(Inventory.update({ quantity:  sequelize.literal(`quantity - ${allTransactionsItems[i].amount}`)},{ where: { product_id: allTransactionsItems[i].product_id,location_id: req.body.from} ,transaction: t}));
+
+                }else{
+                    promises.push( Inventory.create({ product_id: allTransactionsItems[i].product_id,location_id: req.body.from,quantity:-allTransactionsItems[i].amount},{transaction: t}))
+
+                }
+                if(checkTo){
+                    promises.push(Inventory.update({ quantity:  sequelize.literal(`quantity + ${allTransactionsItems[i].amount}`)},{ where: { product_id: allTransactionsItems[i].product_id,location_id: req.body.to},transaction: t }));
+
+                }else{
+                    promises.push( Inventory.create({ product_id: allTransactionsItems[i].product_id,location_id: req.body.to,quantity:allTransactionsItems[i].amount},{transaction: t}))
+
+                }
+   
+       }
+
+       const ConsumerExist = await Consumer.findOne({where: {phone:consumer.phone},transaction: t}).catch((err)=>{
+        next(err);
+        });
+
+        if(!ConsumerExist){
+               const newConsumer=await Consumer.create(consumer,{transaction: t}).catch((err)=>{
+                next(err);
+                });
+
+                const newDistribution= await  Distribution.create({op_id:newOperation.operation_id,consumer_id:newConsumer.id,total:consumer.total},{transaction: t})
+
+            
+            
+        }else{
+            const newDistribution= await  Distribution.create({op_id:newOperation.operation_id,consumer_id:ConsumerExist.id,total:consumer.total},{transaction: t})
+
+        }
+
+       
+
+
+
+      
+       for(let i=0; i<AllExistSerialFrom.length; i++){
+     
+        let index=AllExistSerialFrom[i].index;
+
+
+        for(let j=0; j<AllExistSerialFrom[i].array.length ; j++){
+              let exist=AllExistSerialFrom[i].array[j];
+
+              console.log('exist serial check',allTransactionsItems[index].track_data[j].track_id);
+
+  
+              let serialNumber=allTransactionsItems[index].track_data[j].track_id;
+          
+              let productId= allTransactionsItems[index].product_id;
+              let locationIdTo=req.body.to;
+              let locationIdFrom=req.body.from;
+              
+
+        
+                if(exist){   
+
+                    promises.push(ProductSerialised.update({ location_id:req.body.to},{ where: { serial_number: serialNumber, product_id: productId,location_id:req.body.from},transaction: t}));
+                    
+          
+                  }       
+                  else{
+
+                    //not found serial number for transfar in inventory
+
+                 
+                    //res.json("give valid Serial  id")
+                 
+                  }
+
+
+        }
+
+    }
+
+      for(let i=0; i<AllExixtBatchTo.length; i++){
+     
+          let index=AllExixtBatchTo[i].index;
+          for(let j=0; j<AllExixtBatchTo[i].array.length ; j++){
+            let exist=AllExixtBatchTo[i].array[j];
+            console.log('exist serial check',allTransactionsItems[index].track_data[j].track_id);
+            let batchNumber=allTransactionsItems[index].track_data[j].track_id;
+            let quantity=  allTransactionsItems[index].track_data[j].quantity ;
+            let productId= allTransactionsItems[index].product_id;
+            let locationIdTo=req.body.to;
+            let locationIdFrom=req.body.from;
+            
+             if(exist){   
+                 promises.push(ProductBatch.update({ quantity:sequelize.literal(`quantity + ${quantity}`)},{where:{batch_number:batchNumber, product_id: productId,location_id:locationIdTo},transaction: t}))
+    
+             }       
+             else{
+                promises.push(ProductBatch.create({ batch_number: batchNumber, product_id: productId,location_id:locationIdTo,quantity:quantity},{transaction: t})); 
+             }
+
+             promises.push(ProductBatch.update({ quantity:sequelize.literal(`quantity - ${quantity}`)},{where:{batch_number:batchNumber, product_id: productId,location_id:locationIdFrom},transaction: t}))
+
+            
+
+          }
+
+      }
+
+      console.log("to this point");
+
+      
+
+
+
+ 
+     return  await Promise.all(promises)
+
+    }).then(function (result) {
+        console.log("YAY");
+        res.status(200).json('your operation was successfully done')
+    }).catch(function (err) {
+        console.log(err);
+        next(new Error(' something happer in sypply error'));
+    });
+
+
 
 
      },

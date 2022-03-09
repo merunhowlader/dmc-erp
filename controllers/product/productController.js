@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { Product,ProductAttribute,Units,Category,ProductExperation,ProductSerialised,ProductBatch, Inventory} from '../../models';
+import { Product,ProductAttribute,Units,Category,ProductExperation,ProductSerialised,ProductBatch,Location, Inventory} from '../../models';
 import crypto from 'crypto'; 
 
 
@@ -36,7 +36,7 @@ const productController ={
             const exist = await Product.findAll(
                 {
                
-                attributes: [['product_id','id'], ['name', 'title'],'count_type','sku'],
+                attributes: [['product_id','id'], ['name', 'title'],'count_type','sku','root'],
                 include:[
                 {
                     model: Category,
@@ -46,6 +46,12 @@ const productController ={
                 {
                     model: Units,
                     attributes:['name'],
+                  
+                    required: false, 
+                },
+                {
+                    model: Location,
+                  
                   
                     required: false, 
                 },
@@ -92,6 +98,7 @@ const productController ={
             quantity:req.body.quantity,
             count_type:req.body.count_type,
             category_id:req.body.category_id,
+            root:req.body.product_location,
             sku:newSku,
             price:req.body.price,
             returnable_product:req.body.returnable_product

@@ -39,6 +39,10 @@ Product.belongsTo(models.Category,{
   foreignKey: 'product_id',
   constraints: false
 })
+Product.belongsTo(models.Location,{
+  foreignKey: 'root',
+  constraints: false
+})
 
       
       // define association here
@@ -51,6 +55,7 @@ Product.belongsTo(models.Category,{
     },
     name: DataTypes.STRING,
     sku: DataTypes.STRING,
+    root: DataTypes.INTEGER,
     unit_id: DataTypes.INTEGER,
     count_type: DataTypes.INTEGER,
     price: DataTypes.DECIMAL,

@@ -34,6 +34,13 @@ module.exports = {
           key:'id'
         }
       },
+      root: {
+        type: Sequelize.INTEGER,
+        reference:{
+          model:'Location',
+          key:'location_id'
+        }
+      },
       returnable_product: {
         type: Sequelize.BOOLEAN
       },
