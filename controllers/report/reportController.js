@@ -9,14 +9,52 @@ const loginController ={
     
     async myInventory (req, res, next) {
 
+        let location_id = req.params.id;
+
         try{
             
 
-            const Loan = await  Location.findAll({
+          
+
+            const GivenLoan = await  Location.findAll({
                 
                 include:[ 
                    {
                     model:  LoanInventory ,
+                    where: {location_id_from:location_id},
+                    as:'to',
+                    include:[
+                        {
+                            
+                                model:  Product ,
+                                include:{
+                                    model:Units
+                                }  
+                        },
+                        {
+                            
+                            model:  Location ,
+                            
+                       }
+                    
+                    
+                    ]
+                
+                }
+            
+            ]
+            }).catch((err)=>{
+             
+                next(err);
+            });
+
+
+            const TakenLoan = await  Location.findAll({
+                
+                include:[ 
+                   {
+                    model:  LoanInventory ,
+                    where: {location_id_to:location_id},
                     as:'from',
                     include:[
                         {
@@ -30,33 +68,10 @@ const loginController ={
                             
                             model:  Location ,
                             
-                    }
+                       }
                     
                     
                     ]
-                
-                },
-                {
-                    model:  LoanInventory ,
-                    as:'to',
-                    include: [
-                        {
-                            
-                                model:  Product , 
-                                include:{
-                                    model:Units
-                                }
-                                 
-                        },
-                    
-                        {
-                            
-                            model:  Location ,
-                            
-                    }
-                    
-                    ]
-              
                 
                 }
             
@@ -66,12 +81,58 @@ const loginController ={
                 next(err);
             });
 
+            const newTakenLoan = await  Location.findAll({
+                
+                include: {
+            
+                            
+                    model:   LoanInventory  ,
+                    where: {location_id_to:location_id},
+                    as:'from',
+                    include:[{
+                     
+                            
+                            model:  Location ,
+                            
+                   
+                       
+                    },
+                    {
+                        model:  Product,
+                       
+                        include:
+                            {
+                                
+                                    model: Units ,
+                                  
+                            },
+                          
+                        
+                        
+                        
+                    
+                    
+                
+                    
+                    }]
+                
+            
+                   }   
+        
+            }).catch((err)=>{
+             
+                next(err);
+            });
+
+
+
            
 
             const inventory = await  Location.findAll({
                 include:[ 
                    {
                     model: Inventory ,
+                    where: {location_id:location_id},
                     include:[{
                         model: Product,
                         include:{
@@ -97,8 +158,8 @@ const loginController ={
                 next(err);
             });
 
-            const ReturnAbleProductInventory = await  Product.findAll({
-                where: {returnable_product:true},
+            const myReturnAbleProduct = await  Product.findAll({
+                where: {returnable_product:true,root:location_id},
                 include:[ 
                    {
                     where: {quantity:{[Op.gt]: 0}},
@@ -128,10 +189,46 @@ const loginController ={
                 next(err);
             });
 
+           
 
-            if(inventory&&Loan&&ReturnAbleProductInventory){
 
-                res.json({inventory:inventory,loan:Loan,returnAbleProductInventory:ReturnAbleProductInventory})
+            const othersReturnAbleProduct = await  Product.findAll({
+                where: {
+                    [Op.and]: [{ returnable_product: true }, { root: {[Op.ne]: location_id}}]
+                },
+                include:[ 
+                   {
+                    where: {quantity:{[Op.gt]: 0},location_id:location_id},
+                    model: Inventory ,
+
+                    include:{
+                        model: Location
+                    }
+                   },
+                   {
+                        model:Units,
+                      
+                    },
+                    {
+                        model:Location
+
+                    }
+                
+                
+                ]
+                
+                
+            
+            
+            }).catch((err)=>{
+             
+                next(err);
+            });
+
+
+            if(inventory && TakenLoan &&GivenLoan && myReturnAbleProduct &&othersReturnAbleProduct){
+
+                res.json({takenLoan:TakenLoan, givenLoan:GivenLoan,inventory:inventory,myReturnAbleProduct:myReturnAbleProduct,othersReturnAbleProduct:othersReturnAbleProduct,newTakenLoan:newTakenLoan})
 
             }
 
