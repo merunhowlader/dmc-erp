@@ -38,6 +38,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'root',
         constraints: false
       })
+      Location.hasOne(models.User,{
+        foreignKey: 'department',
+      
+        constraints: false
+      })
       
       
     }

@@ -3,7 +3,6 @@ import { Product,Consumer,Distribution,Units,Location,LocationType,sequelize ,Se
 import CustomErrorHandler from '../../services/CustomErrorHandler';
 
 import bodyValidation from '../../services/operation/bodyValidation';
-//const { Op } = sequelize;
 const { Op } = Sequelize;
 
 const stockOperationController ={
@@ -297,6 +296,9 @@ const stockOperationController ={
      },
     async transfer(req, res, next){
 
+        console.log('this the user data  that we nedd',req.user);
+        console.log(req.body);
+
         let allTransactionsItems=[...req.body.items];
 
         console.log('this form items',allTransactionsItems);
@@ -305,7 +307,7 @@ const stockOperationController ={
            from:req.body.from,
            to:req.body.to,
            reference:req.body.reference,
-           createdBy:1,
+           createdBy:req.user.id,
            operationType:"transfer",
        }
 
@@ -313,7 +315,7 @@ const stockOperationController ={
            from:req.body.from,
            to:req.body.to,
            reference:req.body.reference,
-           createdBy:1,
+           createdBy:req.user.id,
            operationType:"transfer",
            items:req.body.items
        }
@@ -557,7 +559,8 @@ const stockOperationController ={
 
           console.log("to this point");
      
-         return  await Promise.all(promises)
+          await Promise.all(promises);
+          return  newOperation;
 
         }).then(function (result) {
             console.log("YAY");
@@ -1636,62 +1639,7 @@ const stockOperationController ={
     },
  
 
-    async viewSingleOperation(req, res, next){
-       let id = req.params.id;
-
-        try{
-
-            const exist = await StockOperation.findOne({
-                where: {operation_id:id},
-                include:[ {
-                    model: StockOperationItem,
-                    //raw: true,
-                    include:[
-                            {
-                                model: Product,
-                                //attributes:['name'],
-                                        include: {
-                                            model: Units,
-
-                                    },
-                                        
-                                
-                                required: false,     
-                            },{
-                                model: OperationTrackRecord,
-                            
-
-                            }],
-                    required: false,
-                
-                },{
-
-                    model:Location,
-                    attributes:['name'],
-                    as:'From'
-                    
-                    
-                },{
-
-                    model:Location,
-                    attributes:['name'],
-                    as:'To'
-                    
-                    
-                }]
-            });
-
-            if(!exist){
-                res.json("transaction not found")
-            }
-            res.json(exist);
-
-        }catch(err){
-            next(err);
-        }
-     
-    },
-    
+   
     async supply(req, res, next){
         console.log('this is request form body',req.body);
         
@@ -1705,7 +1653,7 @@ const stockOperationController ={
             from:req.body.from,
             to:req.body.to,
             reference:req.body.reference,
-            createdBy:1,
+            createdBy:req.user.id,
             operationType:"supply",
         }
 
@@ -1713,7 +1661,7 @@ const stockOperationController ={
             from:req.body.from,
             to:req.body.to,
             reference:req.body.reference,
-            createdBy:1,
+            createdBy:req.user.id,
             operationType:"supply",
             items:req.body.items
         }
@@ -2258,58 +2206,7 @@ const stockOperationController ={
 
     },
 
-    async stockOperation(req, res, next){
-        try{
-
-            const exist = await StockOperation.findAll({
-              
-                include:[ {
-                    model: StockOperationItem,
-                    //raw: true,
-                    include:[
-                            {
-                                model: Product,
-                                //attributes:['name'],
-                                        include: {
-                                            model: Units,
-
-                                    },
-                                        
-                                
-                                required: false,     
-                            },{
-                                model: OperationTrackRecord,
-                            
-
-                            }],
-                    required: false,
-                
-                },{
-
-                    model:Location,
-                    attributes:['name'],
-                    as:'From'
-                    
-                    
-                },{
-
-                    model:Location,
-                    attributes:['name'],
-                    as:'To'
-                    
-                    
-                }]
-            });
-
-            if(!exist){
-                res.json("transaction not found")
-            }
-            res.json(exist);
-
-        }catch(err){
-            next(err);
-        }
-    },
+   
 
     async inventory(req, res, next){
 

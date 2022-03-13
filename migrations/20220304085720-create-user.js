@@ -8,7 +8,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      userName: {
+      name: {
         type: Sequelize.STRING
       },
       phone: {
@@ -45,7 +45,23 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    });
+    }).then(() => {
+      queryInterface.bulkInsert("Users", [{
+        name: "Merun",
+        phone:"0171",
+        email:"merunhowlader@gmail.com",
+        password:"$2a$10$jKpO0ShCE8oO6j4xl589fuJaXpDcIzkjlBAWHvRTdLefLW0BWb6c.",
+        role:1,
+        department:0, 
+        status:true,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      
+          
+          },
+         
+      ]);
+       });
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Users');

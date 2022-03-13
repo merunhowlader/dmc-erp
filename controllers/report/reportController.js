@@ -1,8 +1,7 @@
 import Joi from 'joi';
-import {User} from './../../models';
 import CustomErrorHandler from './../../services/CustomErrorHandler';
 import JwtService from './../../services/JwtService';
-import { Product,Distribution,Consumer,Units,Location,LocationType,sequelize ,Sequelize,StockOperation,OperationTrackRecord,StockOperationItem,Inventory,RelatedOperation,LoanInventory,ProductSerialised,ProductBatch} from '../../models';
+import {User, Product,Distribution,Consumer,Units,Location,LocationType,sequelize ,Sequelize,StockOperation,OperationTrackRecord,StockOperationItem,Inventory,RelatedOperation,LoanInventory,ProductSerialised,ProductBatch} from '../../models';
 const { Op } = Sequelize;
 const loginController ={
 
@@ -301,6 +300,132 @@ const loginController ={
     async allUsers(req, res, next) {
         res.json('hello monthy inventory report');
     },
+    async stockOperation(req, res, next){
+        try{
+
+            const exist = await StockOperation.findAll({
+              
+                include:[ {
+                    model: StockOperationItem,
+           
+                    include:[
+                            {
+                                model: Product,
+                             
+                                        include: {
+                                            model: Units,
+
+                                    },
+                                        
+                                
+                                required: false,     
+                            },{
+                                model: OperationTrackRecord,
+                            
+
+                            }],
+                    required: false,
+                
+                },{
+
+                    model:Location,
+                    attributes:['name'],
+                    as:'From'
+                    
+                    
+                },{
+
+                    model:Location,
+                    attributes:['name'],
+                    as:'To'
+                    
+                    
+                },
+                {
+
+                    model:User,
+            
+                    
+                    
+                }
+            ]
+            });
+
+            if(!exist){
+                res.json("transaction not found")
+            }
+            res.json(exist);
+
+        }catch(err){
+            
+            next(err);
+        }
+    },
+    async viewSingleOperation(req, res, next){
+        let id = req.params.id;
+ 
+         try{
+ 
+             const exist = await StockOperation.findOne({
+                 where: {operation_id:id},
+                 include:[ {
+                     model: StockOperationItem,
+                     //raw: true,
+                     include:[
+                             {
+                                 model: Product,
+                                 //attributes:['name'],
+                                         include: {
+                                             model: Units,
+ 
+                                     },
+                                         
+                                 
+                                 required: false,     
+                             },{
+                                 model: OperationTrackRecord,
+                             
+ 
+                             }],
+                     required: false,
+                 
+                 },{
+ 
+                     model:Location,
+                     attributes:['name'],
+                     as:'From'
+                     
+                     
+                 },{
+ 
+                     model:Location,
+                     attributes:['name'],
+                     as:'To'
+                     
+                     
+                 },
+                 {
+ 
+                    model:User,
+                    attributes:['name','phone'],
+                    
+                    
+                }
+                
+                ]
+             });
+ 
+             if(!exist){
+                 res.json("transaction not found")
+             }
+             res.json(exist);
+ 
+         }catch(err){
+             next(err);
+         }
+      
+     },
+     
 
 
 

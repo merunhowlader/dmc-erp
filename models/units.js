@@ -25,7 +25,19 @@ module.exports = (sequelize, DataTypes) => {
 
 
     },
-    name: DataTypes.STRING
+    name: DataTypes.STRING,
+    
+    createdAt: {
+      allowNull: false,
+      defaultValue: new Date(),
+      type: DataTypes.DATE
+    },
+    updatedAt: {
+      allowNull: false,
+      defaultValue: new Date(),
+      type: DataTypes.DATE
+    }
+    
   }, {
     sequelize,
     modelName: 'Units',

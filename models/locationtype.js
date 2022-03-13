@@ -23,7 +23,17 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true
 
     },
-    name: DataTypes.STRING
+    name: DataTypes.STRING,
+    createdAt: {
+      allowNull: true,
+      defaultValue: new Date(),
+      type: DataTypes.DATE
+    },
+    updatedAt: {
+      allowNull: true,
+      defaultValue: new Date(),
+      type: DataTypes.DATE
+    }
   }, {
     sequelize,
     modelName: 'LocationType',

@@ -11,6 +11,19 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
+     return await queryInterface.bulkInsert('Categories', [{
+      name: 'ict',
+      createdAt: new Date(),
+      updatedAt: new Date()
+     },{
+          name: 'oxyzen',
+          createdAt: new Date(),
+          updatedAt: new Date()
+      },{
+        name: 'medical',
+        createdAt: new Date(),
+        updatedAt: new Date()
+    }], {});
   },
 
   async down (queryInterface, Sequelize) {

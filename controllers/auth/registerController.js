@@ -11,15 +11,17 @@ import { REFRESH_SECRET } from '../../config';
 const registerController={
   async  register(req, res, next){
 
+    console.log('body',req.body);
+
         //validation
         const registerSchema = Joi.object({
-            userName: Joi.string().min(3).max(40).required(),
+            name: Joi.string().min(3).max(40).required(),
             email:Joi.string().email().required(),
             password:Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
-            conform_password:Joi.ref('password'),
+            confirm_password:Joi.ref('password'),
             phone:Joi.string().min(10).max(14).required(),
-            department:Joi.string().required(),
-            role:Joi.string().optional(),
+            department:Joi.number().integer().required(),
+            role:Joi.number().integer().required(),
             status:Joi.boolean().optional(),
 
         })
@@ -27,6 +29,10 @@ const registerController={
       
 
         const {error} = registerSchema.validate(req.body);
+        console.log(error);
+
+
+
        
 
         if(error){
@@ -60,9 +66,9 @@ const registerController={
             next(err);
         });
 
-        const {userName,email,phone,department,password,role} = req.body;
+        const {name,email,phone,department,password,role} = req.body;
         const user ={
-            userName,
+            name,
             email,
             password:hashedPassword,
             phone,
@@ -85,21 +91,23 @@ const registerController={
 
             if(savedUser){
 
-                access_token= JwtService.sign({id:user.user_id,role:user.role,department:user.department});
+                res.json(savedUser);
 
-                refresh_token= JwtService.sign({id:user.user_id,role:user.role,department:user.department},'1y',REFRESH_SECRET);
+            //     access_token= JwtService.sign({id:user.user_id,role:user.role,department:user.department});
 
-                console.log(' newly asign refresh token ',refresh_token);
-             const savedRefreshToken = await RefreshToken.create({token:refresh_token}).then((data)=>{
+            //     refresh_token= JwtService.sign({id:user.user_id,role:user.role,department:user.department},'1y',REFRESH_SECRET);
+
+            //     console.log(' newly asign refresh token ',refresh_token);
+            //  const savedRefreshToken = await RefreshToken.create({token:refresh_token}).then((data)=>{
     
-                    res.json({access_token:access_token,refresh_token});
+            //         res.json({access_token:access_token,refresh_token});
                   
     
                    
     
-                }).catch((err)=>{
-                    next(err);
-                });
+            //     }).catch((err)=>{
+            //         next(err);
+            //     });
     
 
             }

@@ -14,10 +14,16 @@ module.exports = {
 
      return await queryInterface.bulkInsert('Units', [{
       name: 'Kg',
+      createdAt: new Date(),
+      updatedAt: new Date()
      },{
           name: 'Liter',
+          createdAt: new Date(),
+          updatedAt: new Date()
       },{
         name: 'Piece',
+        createdAt: new Date(),
+        updatedAt: new Date()
     }], {});
   },
 

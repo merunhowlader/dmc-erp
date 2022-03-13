@@ -13,10 +13,16 @@ module.exports = {
     */
      return await queryInterface.bulkInsert('LocationTypes', [{
         name: 'sypply',
+        createdAt: new Date(),
+        updatedAt: new Date()
        },{
             name: 'store',
+            createdAt: new Date(),
+            updatedAt: new Date()
         },{
           name: 'ward',
+          createdAt: new Date(),
+          updatedAt: new Date()
       }], {});
   },
 

@@ -15,10 +15,19 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'role',
         constraints: false
       })
+      User.hasOne(models.StockOperation,{
+        foreignKey: 'createdBy',
+        constraints: false
+      })
+      User.belongsTo(models.Location,{
+        foreignKey: 'department',
+        as:'Department',
+        constraints: false
+      })
     }
   }
   User.init({
-    userName: DataTypes.STRING,
+    name: DataTypes.STRING,
     phone: DataTypes.STRING,
     email: DataTypes.STRING,
     department: DataTypes.INTEGER,

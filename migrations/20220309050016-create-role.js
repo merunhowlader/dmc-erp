@@ -12,14 +12,36 @@ module.exports = {
         type: Sequelize.STRING
       },
       createdAt: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.DATE
       },
       updatedAt: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.DATE
       }
-    });
+    }).then(() => {
+      queryInterface.bulkInsert("Roles", [{
+              name: "SuperAdmin",
+          
+          },
+          {
+              name: "Admin",
+              
+          },
+          {
+              name: "StoreManager",
+             
+          },
+          {
+            name: "WardManager",
+           
+        },
+        {
+          name: "Seller",
+         
+      }
+      ]);
+       });
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Roles');

@@ -29,6 +29,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey:'op_id',
         constraints: false
       })
+      StockOperation.belongsTo(models.User,{
+        foreignKey:'createdBy',
+        constraints: false
+      })
+     
     }
   }
   StockOperation.init({

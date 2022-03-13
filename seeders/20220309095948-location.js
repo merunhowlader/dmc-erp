@@ -13,13 +13,19 @@ module.exports = {
     */
      return await queryInterface.bulkInsert('Locations', [{
       name: 'Main Supply',
-      type:1
+      type:1,
+      createdAt: new Date(),
+      updatedAt: new Date()
      },{
       name: 'ict store',
-      type:2
+      type:2,
+      createdAt: new Date(),
+      updatedAt: new Date()
       },{
         name: 'word',
-        type:3
+        type:3,
+        createdAt: new Date(),
+        updatedAt: new Date()
     }], {});
   },
 

@@ -12,14 +12,24 @@ module.exports = {
         type: Sequelize.STRING
       },
       createdAt: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.DATE
       },
       updatedAt: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.DATE
       }
-    });
+    }).then(() => {
+      queryInterface.bulkInsert("Categories", [{
+              name: "ict",
+          
+          },
+          {
+              name: "oxyzen",
+              
+          }
+      ]);
+       });
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Categories');
