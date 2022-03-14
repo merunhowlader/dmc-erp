@@ -90,10 +90,15 @@ const userController={
     async editUser(req, res, next){
 
         //logic
-        //console.log('user control')
+        console.log('merun',req.body)
         try{
 
-            consle.log('body',req.body)
+            await User.update({role:req.body.role,department:req.body.department,status:req.body.status},{where:{id:req.body.id}}).catch(err=>{
+                next(err);
+            })
+
+
+            res.json('updated successfully')
            
 
 

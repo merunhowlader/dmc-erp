@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import { Product,ProductAttribute,Units,Category,ProductExperation,ProductSerialised,ProductBatch,Location, Inventory} from '../../models';
 import crypto from 'crypto'; 
-
+import moment from 'moment';
 
 
 
@@ -465,32 +465,70 @@ const productController ={
     },
     async addProductExperations(req, res, next){
 
-       
-         console.log(req.body.date);
-        let neExp=req.body.date.toString();
-        let birthday = new Date(req.body.date.toString())
-        let expdate=new Date();
+        let newDate=req.body.date;
 
-        console.log(neExp);
-        let data ={
-            date:expdate,
-         
-            table_name:(req.body.count_type===1) ? "productSerialised" : "productBatch",
-            //track_id:req.body.track_id,
-            
-           
+        let expdate= moment(newDate);
+
+
+        let productId=req.body.product_id;
+        let trackID=req.body.track_id;
+        let count_type=req.body.count_type;
+
+        console.log(req.body); 
+        let formData={
+            expdate,
+            productId,
+            trackID,
+            count_type,
+            expdate
         }
 
-        
+        const exparySchema=Joi.object({
+            productId:Joi.number().integer().required(),
+            trackID: Joi.string().required(),
+            count_type: Joi.number().integer().required(),
+            expdate:Joi.required(),
+            
+            
+
+        })
+
+        const {error} =exparySchema.validate(formData);
+
+       console.error('this is error message',error);
+
+        if(error) {
+            return next(error);
+        }
 
         try{
-              const newProductExperation = await ProductExperation.create(data).then((d) =>{
-                    res.json(d)
-                }).catch((err)=>{
-                 
+            if(req.body.count_type===1){
+                await ProductSerialised.update({experyDate:expdate},{where:{product_id:productId,serial_number:trackID}}).catch(err=>{
                     next(err);
-                });
+                })
 
+                    res.json("experation data was added successfully")
+
+               
+    
+            }else if(req.body.count_type===2){
+
+                await ProductBatch.update({experyDate:expdate},{where:{product_id:productId,batch_number:trackID}}).catch(err=>{
+                 next(err);
+                })
+
+                res.json("experation data was added successfully")
+                
+            }else{
+
+
+                console.log('this is count type for this operation',count_type)
+
+
+                res.json("nonserialise are not allowed")
+            
+            }
+            
           
 
           }catch(err){

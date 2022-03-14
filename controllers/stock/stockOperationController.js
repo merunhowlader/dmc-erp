@@ -24,7 +24,7 @@ const stockOperationController ={
            from:req.body.from,
            to:req.body.to,
            reference:req.body.reference,
-           createdBy:1,
+           createdBy:req.user.id,
            operationType:"Distribution",
        }
 
@@ -39,7 +39,7 @@ const stockOperationController ={
            to:req.body.to,
            reference:req.body.reference,
            phone:req.body.phone,
-           createdBy:1,
+           createdBy:req.user.id,
            operationType:"Distribution",
            items:req.body.items
        }
@@ -586,7 +586,7 @@ const stockOperationController ={
             from:req.body.from,
             to:req.body.to,
             reference:req.body.reference,
-            createdBy:1,
+            createdBy:req.user.id,
             operationType:"loan",
         }
 
@@ -594,7 +594,7 @@ const stockOperationController ={
             from:req.body.from,
             to:req.body.to,
             reference:req.body.reference,
-            createdBy:1,
+            createdBy:req.user.id,
             operationType:"loan",
             items:req.body.items
         }
@@ -872,7 +872,7 @@ const stockOperationController ={
             from:req.body.from,
             to:req.body.to,
             reference:req.body.reference,
-            createdBy:1,
+            createdBy:req.user.id,
             operationType:"returnLoan",
         }
 
@@ -1165,13 +1165,13 @@ const stockOperationController ={
 
         let allTransactionsItems=[...req.body.items];
 
-        let userId=1;
+        let userId=req.user.id;
         
         let mainOperationData ={
             from:req.body.from,
             to:req.body.to,
             reference:req.body.reference,
-            createdBy:1,
+            createdBy:userId,
             operationType:"demand",
         }
 
@@ -1179,7 +1179,7 @@ const stockOperationController ={
             from:req.body.from,
             to:req.body.to,
             reference:req.body.reference,
-            createdBy:1,
+            createdBy:userId,
             operationType:"demand",
             items:req.body.items
         }
@@ -1294,7 +1294,7 @@ const stockOperationController ={
                 from:req.body.from,
                 to:req.body.to,
                 reference:req.body.reference,
-                createdBy:1,
+                createdBy:req.user.id,
                 operationType:"demandSupply",
             }
             
@@ -1310,7 +1310,7 @@ const stockOperationController ={
            from:req.body.from,
            to:req.body.to,
            reference:req.body.reference,
-           createdBy:1,
+           createdBy:req.user.id,
            related_operation_id:req.body.related_operation_id,
            operationType:"DemandSupply",
            items:req.body.items
@@ -1948,7 +1948,7 @@ const stockOperationController ={
            from:req.body.from,
            to:req.body.to,
            reference:req.body.reference,
-           createdBy:1,
+           createdBy:req.user.id,
            operationType:"trash",
        }
 
@@ -1956,7 +1956,7 @@ const stockOperationController ={
            from:req.body.from,
            to:req.body.to,
            reference:req.body.reference,
-           createdBy:1,
+           createdBy:req.user.id,
            operationType:"trash",
            items:req.body.items
        }
