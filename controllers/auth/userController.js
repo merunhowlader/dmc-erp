@@ -9,7 +9,17 @@ const userController={
         //logic
         //console.log('user control')
         try{
-            const user = await User.findOne({where:{user_id:req.user.id}, attributes: ['user_id','name', 'role','department'],}).catch((err)=>{
+            const user = await User.findOne({
+                where: {id:req.user.id},
+                include:[{
+                    model:Role
+                },{ 
+                    model:Location,
+                    as:'Department',
+                    required: false,
+
+                }]
+            }).catch((err)=>{
                 return next(err);
             })
 
