@@ -95,7 +95,6 @@ const productController ={
         let product ={
             name:req.body.name,
             unit_id:req.body.unit_id,
-            quantity:req.body.quantity,
             count_type:req.body.count_type,
             category_id:req.body.category_id,
             root:req.body.product_location,
@@ -105,6 +104,27 @@ const productController ={
            
         }
 
+        const productSchema=Joi.object({
+            name:Joi.string().required(),
+            unit_id:Joi.number().integer().required(),
+            count_type: Joi.number().integer().required(),
+            category_id:Joi.number().integer(),
+            root:Joi.number().integer().required(),
+            sku:Joi.string().required(),
+            price:Joi.any(),
+            returnable_product:Joi.boolean().required(),
+ 
+        })
+ 
+        const {error} =productSchema.validate(product);
+ 
+       console.error('this is error message',error);
+ 
+        if(error) {
+            return next(error);
+        }
+ 
+
 
     
 
@@ -112,7 +132,7 @@ const productController ={
 
         try{
 
-            const alreadyExist = await Product.findOne({where: {name: req.body.name }}).catch((err)=>{
+            const alreadyExist = await Product.findOne({where: {name: req.body.name ,sku:product.sku}}).catch((err)=>{
                  
                 next(err);
             });
