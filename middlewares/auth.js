@@ -1,6 +1,9 @@
 
 import CustomErrorHandler from './../services/CustomErrorHandler';
 import JwtService from './../services/JwtService';
+
+import {User,Role} from './../models';
+
 const  auth = async (req, res, next) => {
 
 
@@ -19,13 +22,23 @@ const  auth = async (req, res, next) => {
 
         const {id,role,department} = JwtService.verify(token);
 
+        const CurrentUser = await User.findOne({where: {id: id},
+            include:{
+                model:Role
+            }
+        });
+
+      
+
         
 
         req.user={};
 
         req.user.id=id;
-        req.user.role=role;
+        req.user.role=CurrentUser.Role.name;
         req.user.department=department;
+
+        console.log('this is user role',CurrentUser.Role.name)
 
         next();
 

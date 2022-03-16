@@ -2,13 +2,217 @@ import Joi from 'joi';
 import CustomErrorHandler from './../../services/CustomErrorHandler';
 import JwtService from './../../services/JwtService';
 import {User, Product,Distribution,Consumer,Units,Location,LocationType,sequelize ,Sequelize,StockOperation,OperationTrackRecord,StockOperationItem,Inventory,RelatedOperation,LoanInventory,ProductSerialised,ProductBatch} from '../../models';
+
 const { Op } = Sequelize;
 const loginController ={
 
-    
-    async myInventory (req, res, next) {
 
-        let location_id = req.params.id;
+    async viewMyAllReleted(req, res, next){
+
+        console.log('this is department',req.user.department);
+
+        
+
+        
+        try{
+
+            const amrKoraDeman= await RelatedOperation.findAll({
+               
+                include: [{
+                    model: StockOperation ,
+                    as:'act',
+                    where:{from:req.user.department},
+                 
+                    include:[
+                            {
+                                model: StockOperationItem,
+                                include:{
+                                    model:Product,
+                                    include:{
+                                        model: Units
+                                    }
+                                },
+                                
+                                required: false,     
+                            },
+                            {
+
+                                model:Location,
+                                attributes:['name'],
+                                as:'From'
+                                
+                                
+                            },{
+            
+                                model:Location,
+                                attributes:['name'],
+                                as:'To'
+                                
+                                
+                            }
+                        ],
+                           
+                        
+                            
+             
+                required: false,
+                    
+                },
+                {
+                    model: StockOperation ,
+                    as:'react',
+                    where:{to:req.user.department},
+                    include:[
+                        {
+                            model: StockOperationItem,
+                            include:{
+                                model:Product,
+                                include:{
+                                    model: Units
+                                }
+                            },
+                            
+                            required: false,     
+                        },
+                        {
+
+                            model:Location,
+                            attributes:['name'],
+                            as:'From'
+                            
+                            
+                        },{
+        
+                            model:Location,
+                            attributes:['name'],
+                            as:'To'
+                            
+                            
+                        }
+                    ],
+                       
+                         required: false,    
+
+                         
+                    
+                    
+                }
+            
+            
+            ],
+            
+            });
+
+            const amrKasekoraDemand = await RelatedOperation.findAll({
+             
+                include: [{
+                    model: StockOperation ,
+                    as:'act',
+                    where:{to:req.user.department},
+                 
+                    include:[
+                            {
+                                model: StockOperationItem,
+                                include:{
+                                    model:Product,
+                                    include:{
+                                        model: Units
+                                    }
+                                },
+                                
+                                required: false,     
+                            },
+                            {
+
+                                model:Location,
+                                attributes:['name'],
+                                as:'From'
+                                
+                                
+                            },{
+            
+                                model:Location,
+                                attributes:['name'],
+                                as:'To'
+                                
+                                
+                            }
+                        ],
+                           
+                        
+                            
+             
+                required: false,
+                    
+                },
+                {
+                    model: StockOperation ,
+                    as:'react',
+                    include:[
+                        {
+                            model: StockOperationItem,
+                            include:{
+                                model:Product,
+                                include:{
+                                    model: Units
+                                }
+                            },
+                            
+                            required: false,     
+                        },
+                        {
+
+                            model:Location,
+                            attributes:['name'],
+                            as:'From'
+                            
+                            
+                        },{
+        
+                            model:Location,
+                            attributes:['name'],
+                            as:'To'
+                            
+                            
+                        }
+                    ],
+                       
+                         required: false,    
+
+                         
+                    
+                    
+                }
+            
+            
+            ],
+            
+            });
+
+            if(amrKoraDeman && amrKasekoraDemand){
+                res.json({amrKoraDeman:amrKoraDeman,amrKasekoraDemand:amrKasekoraDemand});
+            }
+           
+
+        }catch(err){
+            console.log(err);
+            next(err);
+        }
+
+    },
+    
+    async Inventory (req, res, next) {
+        let location_id;
+
+
+        if(req.user.role == 'Admin'||req.user.role == 'SuperAdmin'){
+
+            location_id= req.params.id;
+
+        }else{
+            location_id=req.user.department;
+
+        }
 
         try{
             
@@ -360,6 +564,117 @@ const loginController ={
             
             next(err);
         }
+    },
+    async myStockOperation(req,res,nest){
+        try{
+
+            const doneOperation = await StockOperation.findAll({
+                where:{from:req.user.department},
+                include:[ {
+                    model: StockOperationItem,
+           
+                    include:[
+                            {
+                                model: Product,
+                             
+                                        include: {
+                                            model: Units,
+
+                                    },
+                                        
+                                
+                                required: false,     
+                            },{
+                                model: OperationTrackRecord,
+                            
+
+                            }],
+                    required: false,
+                
+                },{
+
+                    model:Location,
+                    attributes:['name'],
+                    as:'From'
+                    
+                    
+                },{
+
+                    model:Location,
+                    attributes:['name'],
+                    as:'To'
+                    
+                    
+                },
+                {
+
+                    model:User,
+            
+                    
+                    
+                }
+            ]
+            });
+
+            const  receiveOperation = await StockOperation.findAll({
+                where:{to:req.user.department},
+                include:[ {
+                    model: StockOperationItem,
+           
+                    include:[
+                            {
+                                model: Product,
+                             
+                                        include: {
+                                            model: Units,
+
+                                    },
+                                        
+                                
+                                required: false,     
+                            },{
+                                model: OperationTrackRecord,
+                            
+
+                            }],
+                    required: false,
+                
+                },{
+
+                    model:Location,
+                    attributes:['name'],
+                    as:'From'
+                    
+                    
+                },{
+
+                    model:Location,
+                    attributes:['name'],
+                    as:'To'
+                    
+                    
+                },
+                {
+
+                    model:User,
+            
+                    
+                    
+                }
+            ]
+            });
+           
+
+            if(!doneOperation&& !receiveOperation){
+                res.json("transaction not found")
+            }
+            res.json({doneOperation:doneOperation,receiveOperation:receiveOperation});
+
+        }catch(err){
+            
+            next(err);
+        }
+
     },
     async viewSingleOperation(req, res, next){
         let id = req.params.id;

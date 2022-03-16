@@ -2323,21 +2323,41 @@ const stockOperationController ={
                 {
                     model: StockOperation ,
                     as:'react',
-                    include: {
-                         model: StockOperationItem,
-                         include:{
-                            model:Product,
+                    include:[
+                        {
+                            model: StockOperationItem,
                             include:{
-                                model: Units
-                            }
+                                model:Product,
+                                include:{
+                                    model: Units
+                                }
+                            },
+                            
+                            required: false,     
                         },
+                        {
+
+                            model:Location,
+                            attributes:['name'],
+                            as:'From'
+                            
+                            
+                        },{
+        
+                            model:Location,
+                            attributes:['name'],
+                            as:'To'
+                            
+                            
+                        }
+                    ],
+                       
                          required: false,    
 
-                         }
+                         
                     
                     
                 }
-            
             
             ],
             

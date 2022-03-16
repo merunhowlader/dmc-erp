@@ -7,7 +7,11 @@ const reportRoute = express.Router();
 
 reportRoute.get('/operations',reportController.stockOperation);
 reportRoute.get('/operation/:id',reportController.viewSingleOperation);
-reportRoute.get('/inventory/:id',reportController.myInventory);
+reportRoute.get('/inventory/:id',reportController.Inventory);
 reportRoute.get('/alldistribution',reportController.AllDistribution);
+
+//non admin
+reportRoute.get('/mydemand',reportController.viewMyAllReleted);
+reportRoute.get('/myoperations',reportController.myStockOperation);
 
 export default reportRoute;
