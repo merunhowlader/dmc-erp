@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         constraints: false
       })
       Distribution.belongsTo(models.Consumer,{
-        foreignKey:'op_id',
+        foreignKey:'id',
         constraints: false
       })
     }

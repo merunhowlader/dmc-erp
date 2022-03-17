@@ -49,13 +49,20 @@ const loginController ={
                                 as:'To'
                                 
                                 
+                            },
+                            {
+            
+                                model:User,
+                                attributes:['name'],
+                                
+                                
                             }
                         ],
                            
                         
                             
              
-                required: false,
+                required: true,
                     
                 },
                 {
@@ -88,6 +95,11 @@ const loginController ={
                             as:'To'
                             
                             
+                        },
+                        {
+            
+                            model:User,
+                            attributes:['name'],             
                         }
                     ],
                        
@@ -136,13 +148,20 @@ const loginController ={
                                 as:'To'
                                 
                                 
+                            },
+                            {
+            
+                                model:User,
+                                attributes:['name'],
+                                
+                                
                             }
                         ],
                            
                         
                             
              
-                required: false,
+                required: true,
                     
                 },
                 {
@@ -172,6 +191,13 @@ const loginController ={
                             model:Location,
                             attributes:['name'],
                             as:'To'
+                            
+                            
+                        },
+                        {
+            
+                            model:User,
+                            attributes:['name'],
                             
                             
                         }
@@ -455,33 +481,238 @@ const loginController ={
 
     },
     async AllDistribution (req, res, next) {
-        let allDistribution = await Distribution.findAll({
-            include:[
-               {
-                model:StockOperation,
-                include:{
-                    model:StockOperationItem,
-                    include:{
-                        model:OperationTrackRecord
+        console.log('my distribution   check');
 
+        try{
+            let allDistribution = await Distribution.findAll({
+                include:[
+                   {
+                    model:StockOperation,
+
+                    include:[{
+                        model:StockOperationItem,
+                        include:[{
+                            model:OperationTrackRecord
+    
+                        },{ 
+                            model:Product,
+                            include:{
+                                model:Units
+
+                            }
+                        }]
+                    },
+                    {
+
+                        model:Location,
+                        attributes:['name'],
+                        as:'From'
+                        
+                        
+                    },{
+    
+                        model:Location,
+                        attributes:['name'],
+                        as:'To'
+                        
+                        
+                    },
+
+                    {
+                        model:User,
+
+                        attributes:['name'],
                     }
-                }
-               },
-               {
-                   model:Consumer
-               }
-            ]
-        },
-            
-        );
-        if(allDistribution){
+                    
+                
+                
+                
+                    ]
+                   },
+                   {
+                       model:Consumer
+                   }
+                ]
+            },
+                
+            );
+            if(!allDistribution){
+                next(e);
+
+             
+    
+            }
+
+         
             res.json(allDistribution);
 
-        }
+    
 
+        }catch(e){
+            console.log(e);
+            next(e);
+        }
 
        
     },
+    async  myDistribution (req, res, next) {
+
+        console.log('my distribution   check');
+
+        try{
+            let allDistribution = await Distribution.findAll({
+                include:[
+                   {
+                    model:StockOperation,
+                    where: {from:req.user.department},
+                    include:[{
+                        model:StockOperationItem,
+                        include:[{
+                            model:OperationTrackRecord
+    
+                        },{ 
+                            model:Product,
+                            include:{
+                                model:Units
+
+                            }
+                        }]
+                    },
+                    {
+
+                        model:Location,
+                        attributes:['name'],
+                        as:'From'
+                        
+                        
+                    },{
+    
+                        model:Location,
+                        attributes:['name'],
+                        as:'To'
+                        
+                        
+                    },
+
+                    {
+                        model:User,
+
+                        attributes:['name'],
+                    }
+                    
+                
+                
+                
+                    ]
+                   },
+                   {
+                       model:Consumer
+                   }
+                ]
+            },
+                
+            );
+            if(!allDistribution){
+                next(e);
+
+             
+    
+            }
+
+         
+            res.json(allDistribution);
+
+    
+
+        }catch(e){
+            console.log(e);
+            next(e);
+
+        }
+     
+
+       
+    },
+    async  DistributionDetails (req, res, next) {
+
+          let id =req.params.id;
+
+        try{
+            let allDistribution = await Distribution.findOne({
+                where: {id:id},
+                include:[
+                   {
+                    model:StockOperation,
+                    where: {from:req.user.department},
+                    include:[{
+                        model:StockOperationItem,
+                        include:[{
+                            model:OperationTrackRecord
+    
+                        },{ 
+                            model:Product,
+                            include:{
+                                model:Units
+
+                            }
+                        }]
+                    },
+                    {
+
+                        model:Location,
+                        attributes:['name'],
+                        as:'From'
+                        
+                        
+                    },{
+    
+                        model:Location,
+                        attributes:['name'],
+                        as:'To'
+                        
+                        
+                    },
+
+                    {
+                        model:User,
+
+                        attributes:['name'],
+                    }
+                    
+                
+                
+                
+                    ]
+                   },
+                   {
+                       model:Consumer
+                   }
+                ]
+            },
+                
+            );
+            if(!allDistribution){
+                next(e);
+
+             
+    
+            }
+
+         
+            res.json(allDistribution);
+
+    
+
+        }catch(e){
+            console.log(e);
+            next(e);
+
+        }
+     
+
+       
+    },
+   
     async AllConsumer (req, res, next) {
         let allConsumer = await Consumer.findAll();
         res.json(allConsumer);
@@ -609,6 +840,8 @@ const loginController ={
                 {
 
                     model:User,
+
+                    attributes:['name'],
             
                     
                     
