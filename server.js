@@ -11,6 +11,7 @@ import routes from "./routes";
 
 const app = express();
 
+
 app.use(express.json());
 
 
@@ -48,9 +49,30 @@ app.use('/api/v1/',routes);
 // }
 
 
-
+app.post('/send-notification', (req, res) => {
+  const notify = {data: req.body};
+  socket.emit('notification', notify); // Updates Live Notification
+  res.send(notify);
+});
 
 
 app.use(errorHandler);
-app.listen(APP_PORT,()=>console.log(`listening on port ${APP_PORT}`));
+// Send Notification API
+app.post('/send', (req, res) => {
+  const notify = {data: req.body};
+  socket.emit('merun', notify);
+  // Updates Live Notification
+  res.send(notify);
+});
 
+
+const server =app.listen(APP_PORT,()=>console.log(`listening on port ${APP_PORT}`));
+
+
+// Socket Layer over Http Server
+const socket = require('socket.io')(server);
+global.socket = socket;
+// On every Client Connection
+socket.on('connection', socket => {
+    console.log('Socket: client connected');
+});

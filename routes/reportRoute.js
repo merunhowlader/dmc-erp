@@ -12,6 +12,9 @@ reportRoute.get('/locationsusers',reportController.allLocationUsers);
 reportRoute.get('/operation/:id',reportController.viewSingleOperation);
 reportRoute.get('/inventory/:id',reportController.Inventory);
 
+reportRoute.get('/notifications/',reportController.getNotifications);
+
+
 
 reportRoute.get('/distributions',reportController.AllDistribution);
 reportRoute.get('/mydistribution',reportController.myDistribution);

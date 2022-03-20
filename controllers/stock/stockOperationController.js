@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { Product,Consumer,Distribution,Units,Location,LocationType,sequelize ,Sequelize,StockOperation,StockOperationItem,Inventory,RelatedOperation,LoanInventory,ProductSerialised,ProductBatch, OperationTrackRecord} from '../../models';
+import { Product,Notification,Consumer,Distribution,Units,Location,LocationType,sequelize ,Sequelize,StockOperation,StockOperationItem,Inventory,RelatedOperation,LoanInventory,ProductSerialised,ProductBatch, OperationTrackRecord} from '../../models';
 import CustomErrorHandler from '../../services/CustomErrorHandler';
 
 import bodyValidation from '../../services/operation/bodyValidation';
@@ -1911,6 +1911,11 @@ const stockOperationController ={
 
         }
 
+        await Notification.create({notice:`new supply was done operation id ${newOperation.operation_id} `,status:false})
+
+        global.socket.emit('merun', {notice:`new supply was done operation id ${newOperation.operation_id} `,status:false});
+   
+
   
    
         return await Promise.all(promises)
@@ -1928,6 +1933,7 @@ const stockOperationController ={
           
       }).then(function (result) {
           console.log("YAY");
+     
           res.status(200).json('your operation was successfully done')
       }).catch(function (err) {
           console.log("NO!!!");

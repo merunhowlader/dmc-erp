@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import CustomErrorHandler from './../../services/CustomErrorHandler';
 import JwtService from './../../services/JwtService';
-import {User,Role,Category,productAttribute, Product,Distribution,Consumer,Units,Location,LocationType,sequelize ,Sequelize,StockOperation,OperationTrackRecord,StockOperationItem,Inventory,RelatedOperation,LoanInventory,ProductSerialised,ProductBatch} from '../../models';
+import {User,Role,Notification,Category,productAttribute, Product,Distribution,Consumer,Units,Location,LocationType,sequelize ,Sequelize,StockOperation,OperationTrackRecord,StockOperationItem,Inventory,RelatedOperation,LoanInventory,ProductSerialised,ProductBatch} from '../../models';
 
 import moment from 'moment';
 const { Op } = Sequelize;
@@ -226,6 +226,20 @@ const loginController ={
             next(err);
         }
 
+    },
+    async getNotifications (req, res, next) {
+        try{
+          let result=  await Notification.findAll({ order: [
+            ['id', 'DESC']
+        ],});
+
+          res.json(result);
+
+
+        }catch(err){
+            next(err);
+
+        }
     },
     
     async Inventory (req, res, next) {
