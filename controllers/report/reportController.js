@@ -1,8 +1,9 @@
 import Joi from 'joi';
 import CustomErrorHandler from './../../services/CustomErrorHandler';
 import JwtService from './../../services/JwtService';
-import {User, Product,Distribution,Consumer,Units,Location,LocationType,sequelize ,Sequelize,StockOperation,OperationTrackRecord,StockOperationItem,Inventory,RelatedOperation,LoanInventory,ProductSerialised,ProductBatch} from '../../models';
+import {User,Role,Category,productAttribute, Product,Distribution,Consumer,Units,Location,LocationType,sequelize ,Sequelize,StockOperation,OperationTrackRecord,StockOperationItem,Inventory,RelatedOperation,LoanInventory,ProductSerialised,ProductBatch} from '../../models';
 
+import moment from 'moment';
 const { Op } = Sequelize;
 const loginController ={
 
@@ -480,6 +481,38 @@ const loginController ={
 
 
     },
+    async allLocationUsers(req, res, next){
+        try{
+            let allLocationUsers = await Location.findAll({
+                include:[
+                    {
+                        model:LocationType,
+
+                    },
+                    {
+                        model:User,
+                        include:{
+                            model:Role
+                        }
+                    },
+                    {
+                        model:Location,
+                        as: 'substore'
+                    },
+                    
+                  
+
+                ]
+            });
+            res.json(allLocationUsers);
+        }catch(e){
+            console.log(e);
+            next(e);
+
+        }
+
+    },
+
     async AllDistribution (req, res, next) {
         console.log('my distribution   check');
 
@@ -973,6 +1006,128 @@ const loginController ={
          }
       
      },
+
+     async viewAllProductExpiryDate(req, res, next){
+        
+ 
+         try{
+ 
+             const batchExpiration = await ProductBatch.findAll({
+                     
+                where: { [Op.and]: [{experyDate:{[Op.ne]:null }},{quantity:{[Op.ne]:0}}]},
+             
+                     include:[
+                         {
+                             model:Product,
+                             attributes:['name','sku','root'],
+                             include:{
+                                 model:Units,
+                                 attributes:['name'],
+                             }
+                         },
+                         {
+                             model:Location,
+                             attributes:['name'],
+                         }
+                         
+                     ]
+                 
+
+             
+              
+             });
+
+             const SerialisedExpiration= await ProductSerialised.findAll({
+                     
+                where: { experyDate:{[Op.ne]:null }},
+          
+                  include:[
+                      {
+                          model:Product,
+                          attributes:['name','sku','root'],
+                          include:{
+                              model:Units,
+                              attributes:['name'],
+                          }
+                      },
+                      {
+                          model:Location,
+                          attributes:['name'],
+                      }
+                      
+                  ]
+              
+
+          
+           
+          });
+
+ 
+             if(batchExpiration&&SerialisedExpiration){
+                res.json({batchExpiration:batchExpiration,SerialisedExpiration:SerialisedExpiration});
+             }
+             
+ 
+         }catch(err){
+             next(err);
+         }
+      
+     },
+
+     async mylocationProduct(req, res, next){
+         let locationId=req.params.id;
+        
+ 
+        try{
+
+            const myProduct = await Inventory.findAll({
+                    
+                    where: { location_id:locationId},
+            
+                    include:[
+                        {
+                            model:Product,
+                            attributes:['name','sku','root'],
+                            include:[{
+                                model:Units,
+                                attributes:['name'],
+                            },
+                            {
+                                model:ProductBatch,
+                                where: { location_id:locationId},
+                            },
+                            {
+                                model:ProductSerialised,
+                                where: { location_id:locationId},
+                            }
+                        ]
+                        
+                        },
+                        {
+                            model:Location,
+                            attributes:['name'],
+                        }
+                        
+                    ]
+                
+
+            
+             
+            });
+
+           
+            if(myProduct){
+               res.json(myProduct);
+            }
+            
+
+        }catch(err){
+            next(err);
+        }
+     
+    },
+
+     
      
 
 

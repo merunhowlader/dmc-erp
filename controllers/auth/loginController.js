@@ -10,6 +10,8 @@ const loginController ={
 
     async login (req, res, next) {
 
+        console.log(' body', req.body);
+
 
      
         const loginSchema=Joi.object({
@@ -38,7 +40,7 @@ const loginController ={
 
             const match = await  bcrypt.compare(req.body.password,user.password);
 
-            if(!match){
+            if(!match||user.status!==true){
 
                 return next(CustomErrorHandler.wrongCredentials());
 

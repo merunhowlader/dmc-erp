@@ -10,6 +10,7 @@ import reportRoute from './reportRoute';
  router.post('/register',registerController.register);
 
  router.post('/login',loginController.login);
+ router.post('/editpassword',auth,userController.editUserPassword);
 
  router.get('/me',auth,userController.me);
  router.get('/role',userController.allRole);
@@ -23,6 +24,6 @@ import reportRoute from './reportRoute';
  router.use('/product/',productRoute);
 
  router.use('/operation',auth,operationRoute);
- router.use('/report',auth,reportRoute);
+ router.use('/report',reportRoute);
 
 export default router;

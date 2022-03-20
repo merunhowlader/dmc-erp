@@ -16,6 +16,10 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'product_id',
             constraints: false
           })
+          ProductSerialised.belongsTo(models.Location,{
+            foreignKey: 'location_id',
+            constraints: false
+          })
     }
   }
   ProductSerialised.init({

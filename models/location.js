@@ -38,9 +38,17 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'root',
         constraints: false
       })
-      Location.hasOne(models.User,{
+      Location.hasMany(models.User,{
         foreignKey: 'department',
       
+        constraints: false
+      })
+      Location.hasMany(models.ProductSerialised,{
+        foreignKey: 'location_id',
+        constraints: false
+      })
+      Location.hasMany(models.ProductBatch,{
+        foreignKey: 'location_id',
         constraints: false
       })
       
