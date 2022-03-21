@@ -1,9 +1,8 @@
 import Joi from 'joi';
-import {User} from './../../models';
 import CustomErrorHandler from './../../services/CustomErrorHandler';
 import JwtService from './../../services/JwtService';
 import bcrypt from 'bcrypt';
-import { RefreshToken } from '../../models';
+import { RefreshToken,User } from '../../models';
 import { REFRESH_SECRET } from '../../config';
 
 const loginController ={
@@ -74,6 +73,7 @@ const loginController ={
     },
 
     async logout(req,res, next){
+        console.log('log out chekck',req.body);
         const refreshSchema=Joi.object({
             refresh_token:Joi.string().required(),
            

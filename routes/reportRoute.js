@@ -25,7 +25,7 @@ reportRoute.get('/distributionDetails/:id',reportController.DistributionDetails)
 reportRoute.get('/mydemand',myReportPermisssion,reportController.viewMyAllReleted);
 reportRoute.get('/allexpirydate',reportController.viewAllProductExpiryDate);
 reportRoute.get('/myoperations',reportController.myStockOperation);
-reportRoute.get('/myproduct/:id',reportController.mylocationProduct);
+reportRoute.get('/myproducts/:id',reportController.mylocationProduct);
 
 
 export default reportRoute;

@@ -8,6 +8,8 @@ const refreshController={
 
    async refresh(req,res,next){
 
+    console.log('refresh toke body',req.body);
+
     const refreshSchema=Joi.object({
         refresh_token:Joi.string().required(),
        
@@ -26,6 +28,8 @@ const refreshController={
     try {
 
         refreshtoken = await RefreshToken.findOne({where:{token:req.body.refresh_token}}).catch((err)=>{
+
+
             return next(err);
         })
 
@@ -50,7 +54,7 @@ const refreshController={
             return next(CustomErrorHandler.unAuthorized('invalid refresh token 2'));
         }
 
-        const user = await User.findOne({where:{user_id:userId}}).catch(err => {
+        const user = await User.findOne({where:{id:userId}}).catch(err => {
             next(err);
         });
 
@@ -58,14 +62,18 @@ const refreshController={
             return next(CustomErrorHandler.unAuthorized('no user found'));
         }
 
-        const access_token= JwtService.sign({id:user.user_id,role:user.role});
+        console.log('user was found');
 
-        const  refresh_token= JwtService.sign({id:user.user_id,role:user.role},'1y',REFRESH_SECRET);
+        const access_token= JwtService.sign({id:user.id,role:user.role,department:user.department});
 
-         console.log(' newly asign refresh token ',refresh_token);
-         const savedRefreshToken = await RefreshToken.create({token:refresh_token});
+        //  refresh_token= JwtService.sign({id:user.id,role:user.role,department:user.department},'1y',REFRESH_SECRET);
 
-         res.json({access_token:access_token,refresh_token});
+        // console.log(' newly asign refresh token ',refresh_token);
+        // const savedRefreshToken = await RefreshToken.create({token:refresh_token});
+
+        console.log('access_token',access_token);
+
+         res.json({access_token:access_token});
 
 
 

@@ -16,7 +16,7 @@ import reportRoute from './reportRoute';
  router.get('/role',userController.allRole);
  router.get('/users',auth,userController.allUsers);
  router.put('/edituser',userController.editUser);
- router.post('/refresh',auth,refreshController.refresh);
+ router.post('/refresh',refreshController.refresh);
 
  router.post('/logout',auth,loginController.logout);
 
@@ -24,6 +24,6 @@ import reportRoute from './reportRoute';
  router.use('/product/',productRoute);
 
  router.use('/operation',auth,operationRoute);
- router.use('/report',reportRoute);
+ router.use('/report',auth,reportRoute);
 
 export default router;

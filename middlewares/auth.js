@@ -8,17 +8,20 @@ const  auth = async (req, res, next) => {
 
 
     let authHeader=req.headers.authorization;
-    console.log(authHeader);
+
 
     if(!authHeader){
         return next(CustomErrorHandler.unAuthorized());
     }
 
     const token = authHeader.split(' ')[1];
+    console.log('this is auth header authorization',token);
 
     try {
         const mk = JwtService.verify(token);
-        console.log(mk);
+
+        console.log(' what the fuck is this',mk);
+       
 
         const {id,role,department} = JwtService.verify(token);
 
