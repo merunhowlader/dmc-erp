@@ -33,8 +33,8 @@ class CustomErrorHandler extends Error{
 
 
     }
-    static unAuthorized(message="unAuthorized"){
-        return new CustomErrorHandler(401,message);
+    static unAuthorizedPermission(message="unAuthorized"){
+        return new CustomErrorHandler(403,message);
 
 
     }

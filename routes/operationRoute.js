@@ -1,6 +1,7 @@
 import express from 'express';
 import { stockOperationController } from '../controllers';
 import auth from '../middlewares/auth';
+import operationPermission from '../middlewares/operationPermission';
 
 const operationRoute = express.Router();
 
@@ -17,8 +18,6 @@ operationRoute.post('/demandsupply',stockOperationController.demandSupply);
 operationRoute.post('/distribution',stockOperationController.distribution);
 operationRoute.post('/trash',stockOperationController.trash);
 
-operationRoute.get('/allrelatedview',stockOperationController.viewAllReleted);
-operationRoute.get('/singlerelatedview/:id',stockOperationController.viewSingleReleted);
 
 //non amdmin
 

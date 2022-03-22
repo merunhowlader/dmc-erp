@@ -1,13 +1,15 @@
 import express from 'express';
 const router = express.Router();
-import {registerController,loginController,userController,refreshController} from '../controllers';
+import {registerController,loginController,userController,refreshController, reportController} from '../controllers';
 import auth from '../middlewares/auth';
+import operationPermission from '../middlewares/operationPermission';
 import productRoute from './productRoute';
 import operationRoute from './operationRoute';
 import locationRoute from './locationRoute';
 import reportRoute from './reportRoute';
+import contentPermission from '../middlewares/contentPermission';
 
- router.post('/register',registerController.register);
+ router.post('/register',auth,registerController.register);
 
  router.post('/login',loginController.login);
  router.post('/editpassword',auth,userController.editUserPassword);
@@ -18,12 +20,14 @@ import reportRoute from './reportRoute';
  router.put('/edituser',userController.editUser);
  router.post('/refresh',refreshController.refresh);
 
- router.post('/logout',auth,loginController.logout);
+ router.post('/logout',loginController.logout);
 
  router.use('/location',locationRoute);
  router.use('/product/',productRoute);
 
- router.use('/operation',auth,operationRoute);
+ router.use('/operation',auth,operationPermission,contentPermission,operationRoute);
+
+ 
  router.use('/report',auth,reportRoute);
 
 export default router;

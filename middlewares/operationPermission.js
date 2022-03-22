@@ -4,18 +4,18 @@ import JwtService from './../services/JwtService';
 
 import {User,Role} from './../models';
 
-const  myReportPermission = async (req, res, next) => {
-
-
+const  operationPermission = async (req, res, next) => {
 
 
 
     try {
 
-        if(req.user.role=== 'Admin' ||req.user.role=== 'SuperAdmin' ){
+        if(req.user.role=== 'Admin' ){
             return next(CustomErrorHandler.unAuthorizedPermission());
 
         }
+
+        
     
 
         next();
@@ -24,8 +24,8 @@ const  myReportPermission = async (req, res, next) => {
         return next(CustomErrorHandler.unAuthorizedPermission());
     }
 
- 
+    console.log(token);
 
 }
 
-export default myReportPermission;
+export default operationPermission;

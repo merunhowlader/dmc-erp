@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   Notification.init({
    
     notice: DataTypes.STRING,
+    operation_id:DataTypes.INTEGER,
     status:DataTypes.BOOLEAN
   }, {
     sequelize,

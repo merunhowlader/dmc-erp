@@ -11,6 +11,10 @@ module.exports = {
       notice: {
         type: Sequelize.STRING
       },
+      operation_id:{
+        type: Sequelize.INTEGER
+
+      },
       
       status: {
         type: Sequelize.BOOLEAN

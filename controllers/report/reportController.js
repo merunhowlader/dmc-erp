@@ -229,11 +229,29 @@ const loginController ={
     },
     async getNotifications (req, res, next) {
         try{
-          let result=  await Notification.findAll({ order: [
+          let result=  await Notification.findAll({
+            where: {
+                status:{[Op.not]: true}
+            },  
+            order: [
             ['id', 'DESC']
         ],});
 
           res.json(result);
+
+
+        }catch(err){
+            next(err);
+
+        }
+    },
+    async updateNotifications (req, res, next) {
+        let id= req.params.id;
+        console.log(id);
+        try{
+          let result=  await Notification.update({ status: true },{where: {operation_id:id}});
+
+          res.json("notification reades");
 
 
         }catch(err){
@@ -684,13 +702,14 @@ const loginController ={
 
           let id =req.params.id;
 
+         
+
         try{
-            let allDistribution = await Distribution.findOne({
+            let distributionDetails = await Distribution.findOne({
                 where: {id:id},
                 include:[
                    {
                     model:StockOperation,
-                    where: {from:req.user.department},
                     include:[{
                         model:StockOperationItem,
                         include:[{
@@ -735,24 +754,29 @@ const loginController ={
                        model:Consumer
                    }
                 ]
-            },
+            }
                 
             );
-            if(!allDistribution){
-                next(e);
+
+            console.log('iamindistribution',distributionDetails);
+            if(distributionDetails){
+
+                console.log( 'this is deistribution details',distributionDetails)
+                res.json(distributionDetails);
+   
 
              
     
             }
 
          
-            res.json(allDistribution);
+          
 
     
 
-        }catch(e){
-            console.log(e);
-            next(e);
+        }catch(err){
+            console.log(err);
+            next(err);
 
         }
      
@@ -1089,36 +1113,41 @@ const loginController ={
      },
 
      async mylocationProduct(req, res, next){
-         let locationId=req.params.id;
+         let locationId=req.user.department;
+      
         
  
         try{
 
-            const myProduct = await Inventory.findAll({
+            const myProduct = await Product.findAll({
                     
-                    where: { location_id:locationId},
-            
+                     where: { root:locationId},
+
+                    attributes:['name','sku','root','count_type'],
                     include:[
                         {
-                            model:Product,
-                            attributes:['name','sku','root'],
-                            include:[{
-                                model:Units,
-                                attributes:['name'],
-                            },
-                            {
-                                model:ProductBatch,
-                                where: { location_id:locationId},
-                            },
-                            {
-                                model:ProductSerialised,
-                                where: { location_id:locationId},
+                            model:Units,
+                         
+                        },
+
+                        {
+                            model:ProductBatch,
+                            include:{
+                                model:Location
                             }
-                        ]
-                        
+                           
                         },
                         {
+                            model:ProductSerialised,
+                            include:{
+                                model:Location
+                            }
+                           
+                        },
+    
+                        {
                             model:Location,
+
                             attributes:['name'],
                         }
                         
@@ -1140,6 +1169,241 @@ const loginController ={
         }
      
     },
+    async viewAllReleted(req, res, next){
+
+      
+        try{
+
+            const exist = await RelatedOperation.findAll({
+               
+                include: [{
+                    model: StockOperation ,
+                    as:'act',
+                    include:[
+                            {
+                                model: StockOperationItem,
+                                include:{
+                                    model:Product,
+                                    include:{
+                                        model: Units
+                                    }
+                                },
+                                
+                                required: false,     
+                            },
+                            {
+
+                                model:Location,
+                                attributes:['name'],
+                                as:'From'
+                                
+                                
+                            },{
+            
+                                model:Location,
+                                attributes:['name'],
+                                as:'To'
+                                
+                                
+                            }
+                        ],
+                           
+                        
+                            
+             
+                required: false,
+                    
+                },
+                {
+                    model: StockOperation ,
+                    as:'react',
+                    include:[
+                        {
+                            model: StockOperationItem,
+                            include:{
+                                model:Product,
+                                include:{
+                                    model: Units
+                                }
+                            },
+                            
+                            required: false,     
+                        },
+                        {
+
+                            model:Location,
+                            attributes:['name'],
+                            as:'From'
+                            
+                            
+                        },{
+        
+                            model:Location,
+                            attributes:['name'],
+                            as:'To'
+                            
+                            
+                        }
+                    ],
+                       
+                         required: false,    
+
+                         
+                    
+                    
+                }
+            
+            ],
+            
+            });
+
+            if(!exist){
+                res.json("transaction not found")
+            }
+            res.json(exist);
+
+        }catch(err){
+            next(err);
+        }
+    },
+    async  viewSingleReleted(req, res, next){
+        let id = req.params.id;
+ 
+        try{
+
+            const exist = await RelatedOperation.findOne({
+               where: {id:id},
+                include: [{
+                    model: StockOperation ,
+                    as:'act',
+                    include:[
+                            {
+                                model: StockOperationItem,
+                                include:[{
+                                    model:Product,
+                                    include:{
+                                        model: Units
+                                    }
+                                     },
+                                    {
+                                        model:OperationTrackRecord,
+
+                                    }
+                                ],
+                                
+                                required: false,     
+                            },
+                            {
+
+                                model:Location,
+                                attributes:['name'],
+                                as:'From'
+                                
+                                
+                            },{
+            
+                                model:Location,
+                                attributes:['name'],
+                                as:'To'
+                                
+                                
+                            },
+                            {
+                                model:User,
+                                attributes:['name','phone'],
+                            }
+                        ],
+                           
+                        
+                            
+             
+                required: false,
+                    
+                },
+                {
+                    model: StockOperation ,
+                    as:'react',
+                    include:[ {
+                         model: StockOperationItem,
+                         include:[
+                         {
+                            model:Product,
+                            include:{
+                                model: Units
+                            }
+                        }, {
+                            model:OperationTrackRecord,
+
+                        }]
+                        ,
+                         required: false,    
+
+                    },
+                    {
+
+                        model:Location,
+                        attributes:['name'],
+                        as:'From'
+                        
+                        
+                    },{
+    
+                        model:Location,
+                        attributes:['name'],
+                        as:'To'
+                        
+                        
+                    },
+                    {
+                        model:User,
+                        attributes:['name','phone'],
+                    }
+                ]
+                    
+                    
+                }
+            
+            
+            ],
+            
+            });
+
+            if(!exist){
+                res.json("transaction not found")
+            }
+
+            res.json(exist);
+
+        }catch(err){
+            next(err);
+        }
+      
+     },
+     async  allCount(req, res, next){
+       
+ 
+        try{
+
+            let allUsers=await User.count();
+           let allProduct=await Product.count();
+            let allLocations=await Location.count();
+           let  allOperations=await StockOperation.count();
+
+            if(allOperations&&allUsers&&allProduct&&allLocations){
+                res.json({allUsers:allUsers,allProduct:allProduct,allLocations:allLocations,allOperations:allOperations});
+
+            }
+
+
+
+
+        }catch(err){
+
+            console.log(err);
+            next(err);
+        }
+      
+     },
 
      
      

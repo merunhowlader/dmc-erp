@@ -13,19 +13,26 @@ reportRoute.get('/operation/:id',reportController.viewSingleOperation);
 reportRoute.get('/inventory/:id',reportController.Inventory);
 
 reportRoute.get('/notifications/',reportController.getNotifications);
+reportRoute.post('/updatenotice/:id',reportController.updateNotifications);
 
 
 
 reportRoute.get('/distributions',reportController.AllDistribution);
-reportRoute.get('/mydistribution',reportController.myDistribution);
-reportRoute.get('/distributionDetails/:id',reportController.DistributionDetails);
+reportRoute.get('/mydistribution',myReportPermisssion,reportController.myDistribution);
+reportRoute.get('/distributiondetails/:id',reportController.DistributionDetails);
 
 
 //non admin
 reportRoute.get('/mydemand',myReportPermisssion,reportController.viewMyAllReleted);
 reportRoute.get('/allexpirydate',reportController.viewAllProductExpiryDate);
-reportRoute.get('/myoperations',reportController.myStockOperation);
-reportRoute.get('/myproducts/:id',reportController.mylocationProduct);
+reportRoute.get('/myoperations',myReportPermisssion,reportController.myStockOperation);
 
+
+reportRoute.get('/allrelatedview',reportController.viewAllReleted);
+reportRoute.get('/singlerelatedview/:id',reportController.viewSingleReleted);
+
+reportRoute.get('/allcount',reportController.allCount);
+
+reportRoute.get('/myproducts/',myReportPermisssion,reportController.mylocationProduct);
 
 export default reportRoute;
