@@ -27,6 +27,12 @@ class CustomErrorHandler extends Error{
 
 
     }
+    
+    static invalidRefreshToken(message="invalid refresh token"){
+        return new CustomErrorHandler(455,message);
+
+
+    }
     static unAuthorized(message="unAuthorized"){
         return new CustomErrorHandler(401,message);
 

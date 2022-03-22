@@ -34,7 +34,10 @@ const refreshController={
         })
 
         if(!refreshtoken){
-            return next(CustomErrorHandler.unAuthorized('invalid refresh token 1'));
+
+            console.log(refreshtoken);
+
+            return next(CustomErrorHandler.invalidRefreshToken('invalid refresh token 1'));
         }
         let userId;
 
@@ -51,7 +54,7 @@ const refreshController={
            
            
         }catch(err){
-            return next(CustomErrorHandler.unAuthorized('invalid refresh token 2'));
+            return next(CustomErrorHandler.invalidRefreshToken('invalid refresh token 2'));
         }
 
         const user = await User.findOne({where:{id:userId}}).catch(err => {
@@ -59,7 +62,7 @@ const refreshController={
         });
 
         if(!user){
-            return next(CustomErrorHandler.unAuthorized('no user found'));
+            return next(CustomErrorHandler.invalidRefreshToken());
         }
 
         console.log('user was found');
