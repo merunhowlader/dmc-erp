@@ -703,7 +703,7 @@ const stockOperationController ={
                         t.rollback()
                         next(err);
                      });
-                    const checkDataExistTo=await ProductSerialised.findOne({where:{serial_number:d.track_id}}).catch((err)=>{
+                    const checkDataExistTo=await ProductSerialised.findOne({where:{[Op.and]:[{product_id:allTransactionsItems[i].product_id},{serial_number:d.track_id}]}}).catch((err)=>{
                                         next(err);
                             })
                  
@@ -989,7 +989,7 @@ const stockOperationController ={
                      });
   
                     
-                    const checkDataExistTo=await ProductSerialised.findOne({where:{serial_number:d.track_id}}).catch((err)=>{
+                    const checkDataExistTo=await ProductSerialised.findOne({where:{[Op.and]:[{product_id:allTransactionsItems[i].product_id},{serial_number:d.track_id}]}} ).catch((err)=>{
                         t.rollback()
                             next(err);
                             })
@@ -1415,7 +1415,7 @@ const stockOperationController ={
                      });
   
                     
-                    const checkDataExistTo=await ProductSerialised.findOne({where:{serial_number:d.track_id}}).catch((err)=>{
+                    const checkDataExistTo=await ProductSerialised.findOne({where:{[Op.and]:[{product_id:allTransactionsItems[i].product_id},{serial_number:d.track_id}]}}).catch((err)=>{
               
                             next(err);
                             })
@@ -2065,7 +2065,7 @@ const stockOperationController ={
                      });
   
                     
-                    const checkDataExistTo=await ProductSerialised.findOne({where:{serial_number:d.track_id}}).catch((err)=>{
+                    const checkDataExistTo=await ProductSerialised.findOne({where:{[Op.and]:[{product_id:allTransactionsItems[i].product_id},{serial_number:d.track_id}]}} ).catch((err)=>{
                         t.rollback()
                             next(err);
                             })

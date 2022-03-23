@@ -401,6 +401,7 @@ const loginController ={
                             model:Units
                         },{
                             model:ProductSerialised
+                            
                         },{
                             model:ProductBatch
                         }]
@@ -423,6 +424,9 @@ const loginController ={
              
                 next(err);
             });
+
+
+          
 
             const myReturnAbleProduct = await  Product.findAll({
                 where: {returnable_product:true,root:location_id},
