@@ -397,9 +397,13 @@ const loginController ={
                     where: {location_id:location_id},
                     include:[{
                         model: Product,
-                        include:{
+                        include:[{
                             model:Units
-                        }
+                        },{
+                            model:ProductSerialised
+                        },{
+                            model:ProductBatch
+                        }]
 
                     },
                     {

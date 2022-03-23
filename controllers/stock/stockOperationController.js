@@ -391,8 +391,11 @@ const stockOperationController ={
                     console.log('check track id',d);
                 await OperationTrackRecord.create({track_id:d.track_id, quantity:d.quantity,item_operation_id:newlyCreatedItem.id},{transaction: t}).catch((err)=>{
                         next(err);
+
+                        
                      });
-                const checkDataExistTo=await ProductBatch.findOne({where:{batch_number:d.track_id,location_id:req.body.to}}).catch((err)=>{
+                     
+                const checkDataExistTo=await ProductBatch.findOne({where:{[Op.and]:[{product_id:allTransactionsItems[i].product_id},{batch_number:d.track_id},{location_id:formData.to}]}}).catch((err)=>{
                                        next(err);
                            })
                     return checkDataExistTo;
@@ -411,9 +414,12 @@ const stockOperationController ={
                         t.rollback()
                         next(err);
                      });
+
+
+                 
   
                     
-                    const checkDataExistTo=await ProductSerialised.findOne({where:{serial_number:d.track_id}}).catch((err)=>{
+                    const checkDataExistTo=await ProductSerialised.findOne({where:{[Op.and]:[{product_id:allTransactionsItems[i].product_id},{serial_number:d.track_id}]}} ).catch((err)=>{
                         t.rollback()
                             next(err);
                             })
@@ -1748,8 +1754,8 @@ const stockOperationController ={
               await OperationTrackRecord.create({track_id:d.track_id, quantity:d.quantity,item_operation_id:newlyCreatedItem.id},{transaction: t}).catch((err)=>{
                   next(err);
                });
-               console.log("im in operation track");
-             const checkDataExistTo=await ProductBatch.findOne({where:{batch_number:d.track_id}}).catch((err)=>{
+      
+             const checkDataExistTo=await ProductBatch.findOne( {where:{[Op.and]:[{product_id:allTransactionsItems[i].product_id},{batch_number:d.track_id}]}}).catch((err)=>{
                                      t.rollback()
                                      next(err);
                          })
@@ -1773,7 +1779,7 @@ const stockOperationController ={
                    });
 
                   
-                  const checkDataExistTo=await ProductSerialised.findOne({where:{serial_number:d.track_id}}).catch((err)=>{
+                  const checkDataExistTo=await ProductSerialised.findOne({where:{[Op.and]:[{product_id:allTransactionsItems[i].product_id},{serial_number:d.track_id}]}}).catch((err)=>{
                       t.rollback()
                           next(err);
                           })
@@ -1896,7 +1902,8 @@ const stockOperationController ={
               let locationIdFrom=req.body.from;
               
                if(exist){   
-                   promises.push(ProductBatch.update({ quantity:sequelize.literal(`quantity + ${quantity}`)},{where:{batch_number:batchNumber, product_id: productId,location_id:locationIdTo} ,transaction: t}))
+                
+                   promises.push(ProductBatch.update({ quantity:sequelize.literal(`quantity + ${quantity}`)},{where:{[Op.and]:[{product_id:allTransactionsItems[i].product_id},{batch_number:d.track_id},{location_id:locationIdTo}]},transaction: t}))
       
                }       
                else{
