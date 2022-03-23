@@ -25,14 +25,6 @@ module.exports = {
           
           },
           {
-              name: "SubStore",
-              
-          },
-          {
-              name: "Shop",
-             
-          },
-          {
             name: "Ward",
            
         },

@@ -33,7 +33,44 @@ module.exports = {
         allowNull: true,
         type: Sequelize.DATE
       }
-    });
+    }).then(() => {
+      queryInterface.bulkInsert("Locations", [{
+              name: "SupplyLocation",
+              type:3,
+          
+          },
+          {
+              name: "UserLocation",
+              type:4
+              
+          },
+          {
+              name: "TrashLocation",
+              type:5
+             
+          },
+          {
+            name: "ict Store",
+            type:1
+           
+        },
+        {
+          name: "medicine Store",
+          type:1
+         
+        },
+        {
+          name: "Ward One",
+          type:2
+         
+      },
+      {
+        name: "Ward Two",
+        type:2
+       
+      },
+      ]);
+       });
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Locations');
