@@ -25,6 +25,10 @@ module.exports = {
           key:'location_id'
         }
       },
+      quantity: {
+        type: Sequelize.INTEGER,
+        defaultValue:1
+      },
       experyDate: {
         type: Sequelize.DATE,
         

@@ -52,13 +52,26 @@ module.exports = {
         email:"merunhowlader@gmail.com",
         password:"$2a$10$jKpO0ShCE8oO6j4xl589fuJaXpDcIzkjlBAWHvRTdLefLW0BWb6c.",
         role:1,
-        department:0, 
+        department:null, 
         status:true,
         createdAt: new Date(),
         updatedAt: new Date()
       
           
           },
+          {
+            name: "Merun",
+            phone:"01890369176",
+            email:"merun.kh@gmail.com",
+            password:"$2a$10$jKpO0ShCE8oO6j4xl589fuJaXpDcIzkjlBAWHvRTdLefLW0BWb6c.",
+            role:2,
+            department:null, 
+            status:true,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          
+              
+           },
          
       ]);
        });

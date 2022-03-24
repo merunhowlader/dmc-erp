@@ -1,13 +1,13 @@
 import Joi from 'joi';
-import { Product,ProductAttribute,Units,Category,ProductExperation,ProductSerialised,ProductBatch,Location, Inventory} from '../../models';
-import crypto from 'crypto'; 
+import { Product,ProductAttribute,Units,Category,Sequelize,ProductExperation,ProductSerialised,ProductBatch,Location, Inventory} from '../../models';
 import moment from 'moment';
 
 
 
 
 import CustomErrorHandler from '../../services/CustomErrorHandler';
-import { Sequelize } from 'sequelize';
+
+const { Op } = Sequelize;
 const productController ={
    async store(req, res, next){
     try{
@@ -83,14 +83,7 @@ const productController ={
 
     async addProduct(req, res, next){
 
-        let newSku=req.body.name.slice(0,4)+crypto.randomBytes(4).toString("hex");
-
-        crypto.randomUUID
-
-
-        // if(req.body.sku){
-        //     newSku=req.body.sku;
-        // }
+    
         console.log(req.body);
         let product ={
             name:req.body.name,
@@ -98,7 +91,7 @@ const productController ={
             count_type:req.body.count_type,
             category_id:req.body.category_id,
             root:req.body.product_location,
-            sku:newSku,
+            sku:req.body.sku,
             price:req.body.price,
             returnable_product:req.body.returnable_product
            
@@ -131,8 +124,9 @@ const productController ={
         
 
         try{
+      
 
-            const alreadyExist = await Product.findOne({where: {name: req.body.name ,sku:product.sku}}).catch((err)=>{
+            const alreadyExist = await Product.findOne({where:{[Op.or]:[{name: req.body.name },{sku:product.sku}]}}).catch((err)=>{
                  
                 next(err);
             });
