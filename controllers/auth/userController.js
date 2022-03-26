@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import { User ,Role,Sequelize,Location} from "../../models";
 import CustomErrorHandler from './../../services/CustomErrorHandler';
+import sendEmail from '../../utils/sendEmail'
 import bcrypt from 'bcrypt';
 const { Op } = Sequelize;
 const userController={
@@ -37,6 +38,15 @@ const userController={
             return next(err);
 
         }
+
+    },
+
+    async forgotPassword(req, res, next){
+
+        console.log(' forgot password request');
+       await  sendEmail('merunhowlader@gmail.com','fuck you','omg ');
+
+       res.json('omg what is going on');
 
     },
 
@@ -192,47 +202,47 @@ const userController={
 
     },
 
-    async forgotPassword(req, res, next){
+    // async forgotPassword(req, res, next){
 
-        try{
+    //     try{
 
-            const user = await User.findOne({where:{id:req.user.id}}).catch((err)=>{
-                return next(err);
-            })
+    //         const user = await User.findOne({where:{id:req.user.id}}).catch((err)=>{
+    //             return next(err);
+    //         })
 
-            if(!user){
-                return next(CustomErrorHandler.wrongCredentials());
-            }
+    //         if(!user){
+    //             return next(CustomErrorHandler.wrongCredentials());
+    //         }
 
-            const match = await  bcrypt.compare(password.old,user.password);
+    //         const match = await  bcrypt.compare(password.old,user.password);
 
-            if(!match){
+    //         if(!match){
 
-                return next(CustomErrorHandler.wrongCredentials());
+    //             return next(CustomErrorHandler.wrongCredentials());
 
-            }
-            const hashedPassword = await bcrypt.hash(password.new,10).catch((err)=>{
-                next(err);
-            });
+    //         }
+    //         const hashedPassword = await bcrypt.hash(password.new,10).catch((err)=>{
+    //             next(err);
+    //         });
 
-            await User.update({password:hashedPassword},{where:{id:req.user.id}}).catch((err)=>{
-                return next(err);
-            })
-
-
+    //         await User.update({password:hashedPassword},{where:{id:req.user.id}}).catch((err)=>{
+    //             return next(err);
+    //         })
 
 
-            res.json('updated successfully')
+
+
+    //         res.json('updated successfully')
            
 
 
-        }catch(err){
+    //     }catch(err){
 
-            return next(err);
+    //         return next(err);
 
-        }
+    //     }
 
-    }
+    // }
 
 
 

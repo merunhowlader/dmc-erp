@@ -14,6 +14,8 @@ import contentPermission from '../middlewares/contentPermission';
  router.post('/login',loginController.login);
  router.post('/editpassword',auth,userController.editUserPassword);
 
+ router.post('/forgotpassword',userController.forgotPassword);
+
  router.get('/me',auth,userController.me);
  router.get('/role',userController.allRole);
  router.get('/users',auth,userController.allUsers);
