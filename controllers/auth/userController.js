@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { User ,Role,Sequelize,Location} from "../../models";
+import { User ,Role,Sequelize,Location,ForgotToken} from "../../models";
 import CustomErrorHandler from './../../services/CustomErrorHandler';
 import sendEmail from '../../utils/sendEmail'
 import bcrypt from 'bcrypt';
@@ -43,10 +43,65 @@ const userController={
 
     async forgotPassword(req, res, next){
 
-        console.log(' forgot password request');
-       await  sendEmail('merunhowlader@gmail.com','fuck you','omg ');
+        console.log('kldsjfaaaaaaaaaaaaaa',req.body);
 
-       res.json('omg what is going on');
+        const emailSchema=Joi.object({
+            email:Joi.string().email().required(),
+      
+        
+ 
+        })
+ 
+        const {error} =emailSchema.validate(req.body);``
+ 
+       console.error('this is error message',error);
+ 
+        if(error) {
+            return next(error);
+        }
+
+        try {
+          let user= await User.findOne({where: {email:req.body.email}});
+
+          if(!user) {
+
+            next('something wrong happened');
+
+          }
+
+          console.log(' forgot password request');
+
+          let token =Math.floor(1000 + Math.random() * 9000);
+
+          let userToken= ForgotToken.findOne({where: {user_id:user.id}})
+          if(userToken){
+           await ForgotToken.destroy({
+                where: {
+                    user_id:user.id
+                }
+            })
+
+          }
+
+
+         let newToken= await ForgotToken.create({user_id:user.id,tem_token:token})
+
+
+         await  sendEmail(req.body.email,'bindulogic invenotry Forget Password ',`This email is from Bindulogic inventory,this is your password changing link click the link to chang password link:  http://localhost:3000/forgot-password-reset/${newToken.user_id}/${newToken.tem_token} ,use this code to reset your password`);
+  
+
+         
+         res.json('success');
+
+         
+
+
+        }catch(err){
+            console.log(err);
+
+        }
+
+       
 
     },
 
