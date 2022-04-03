@@ -97,7 +97,82 @@ const userController={
 
 
         }catch(err){
+            console.log('hello'.err);
+            return next(err);
+
+        }
+
+       
+
+    },
+
+
+    async resetforgetPassword(req, res, next){
+
+     
+
+        const resetPasswordSchema=Joi.object({
+            id:Joi.string().required(),
+            token:Joi.string().required(),
+            Npassword:Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
+            Cpassword:Joi.ref('Npassword'),
+      
+        
+ 
+        })
+ 
+        const {error} =resetPasswordSchema.validate(req.body);
+
+ 
+        if(error) {
+            return next(error);
+        }
+
+        try {
+          let resetRequest= await ForgotToken.findOne({where:{[Op.and]:[{user_id:req.body.id},{tem_token:req.body.token}]}});
+
+          if(!resetRequest) {
+
+            next('something wrong happened');
+
+          }
+
+          const hashedPassword = await bcrypt.hash(req.body.Npassword,10).catch((err)=>{
+            next(err);
+           });
+
+          await User.update({password:hashedPassword},{where:{id:req.body.id}})
+
+
+         
+           await ForgotToken.destroy({
+                where: {
+                    user_id:req.body.id
+                }
+            })
+
+           let newUser=await User.findOne({where: {id:req.body.id}}); 
+
+
+
+          
+
+
+         
+
+
+         await  sendEmail(newUser.email,'bindulogic invenotry Password Change',`your password was changet at ${Date.now()}`);
+  
+
+         
+         res.json('success');
+
+         
+
+
+        }catch(err){
             console.log(err);
+            return next(err);
 
         }
 
