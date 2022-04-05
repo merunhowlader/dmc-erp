@@ -1396,9 +1396,10 @@ const loginController ={
            let allProduct=await Product.count();
             let allLocations=await Location.count();
            let  allOperations=await StockOperation.count();
+           let graphData= await StockOperation.findAll({attributes: [[ sequelize.fn('MONTH', sequelize.col('createdAt')), 'data']] });
 
             if(allOperations&&allUsers&&allProduct&&allLocations){
-                res.json({allUsers:allUsers,allProduct:allProduct,allLocations:allLocations,allOperations:allOperations});
+                res.json({allUsers:allUsers,allProduct:allProduct,allLocations:allLocations,allOperations:allOperations,graphData:graphData});
 
             }
 
