@@ -1,23 +1,38 @@
 {
   "development": {
-    "username": "root",
-    "password": null,
-    "database": "dmc_erp",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "username": "dmcinv",
+    "password": "vbABcQoIWfVaOQSQ",
+    "database": "defaultdb",
+    "host": "db-postgresql-sgp1-37192-do-user-1794786-0.b.db.ondigitalocean.com",
+    "dialect": "postgres",
+    "dialectOptions": {
+      "ssl": {
+        "rejectUnauthorized": false
+      }
+    }
   },
   "test": {
-    "username": "root",
-    "password": null,
-    "database": "database_test",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "username": "dmcinv",
+    "password": "vbABcQoIWfVaOQSQ",
+    "database": "defaultdb",
+    "host": "db-postgresql-sgp1-37192-do-user-1794786-0.b.db.ondigitalocean.com",
+    "dialect": "postgres",
+    "dialectOptions": {
+      "ssl": {
+        "rejectUnauthorized": false
+      }
+    }
   },
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "username": "dmcinv",
+    "password": "vbABcQoIWfVaOQSQ",
+    "database": "defaultdb",
+    "host": "db-postgresql-sgp1-37192-do-user-1794786-0.b.db.ondigitalocean.com",
+    "dialect": "postgres",
+    "dialectOptions": {
+      "ssl": {
+        "rejectUnauthorized": false
+      }
+    }
   }
 }

@@ -1,6 +1,11 @@
 import dotenv from 'dotenv';
 
 dotenv.config();
+// "username": "root",
+// "password": null,
+// "database": "dmc_erp",
+// "host": "127.0.0.1",
+// "dialect": "mysql"
 
 export const  {
      APP_PORT,
