@@ -22,14 +22,8 @@ app.use(express.json());
 
 
 const corsOpts = {
-  origin: '*',
-  optionsSuccessStatus: 200,
-  methods: [
-    'GET',
-    'POST',
-    'PUT',
-  ],
-  allowedHeaders: ["Access-Control-Allow-Headers", "Origin", "X-Requested-With", "Content-Type", "Accept"]
+  origin: true,
+  credentials:true,
 
 };
 
