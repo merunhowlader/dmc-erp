@@ -3,7 +3,7 @@ import  smtpTransport from'nodemailer-smtp-transport';
 
 const sendEmail = async (email, subject, text) => {
 
-    console.log(email,subject,text);
+   
     try {
    
 

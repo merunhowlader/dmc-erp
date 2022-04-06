@@ -29,6 +29,7 @@ const corsOpts = {
     'POST',
     'PUT',
   ],
+  allowedHeaders: ["Access-Control-Allow-Headers", "Origin", "X-Requested-With", "Content-Type", "Accept"]
 
 };
 
