@@ -27,7 +27,10 @@ app.use(express.json());
 
 // };
 const corsOpts = {
-  credentials: true, origin: true, exposedHeaders: '*'
+    credentials: true,
+    preflightContinue: true,
+    methods: ['GET', 'POST', 'PUT'],
+    origin: true
 
 };
 
