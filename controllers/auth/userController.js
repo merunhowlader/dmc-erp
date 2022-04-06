@@ -10,7 +10,7 @@ const userController={
     async me(req, res, next){
 
         //logic
-        //console.log('user control')
+        
         try{
             const user = await User.findOne({
                 where: {id:req.user.id},
@@ -43,7 +43,7 @@ const userController={
 
     async forgotPassword(req, res, next){
 
-        console.log('kldsjfaaaaaaaaaaaaaa',req.body);
+        
 
         const emailSchema=Joi.object({
             email:Joi.string().email().required(),
@@ -69,7 +69,7 @@ const userController={
 
           }
 
-          console.log(' forgot password request');
+         
 
           let token =Math.floor(1000 + Math.random() * 9000);
 
@@ -97,7 +97,7 @@ const userController={
 
 
         }catch(err){
-            console.log('hello'.err);
+           
             return next(err);
 
         }
@@ -171,7 +171,7 @@ const userController={
 
 
         }catch(err){
-            console.log(err);
+            
             return next(err);
 
         }
@@ -184,7 +184,7 @@ const userController={
     async allUsers(req, res, next){
 
         //logic
-        console.log('user control')
+       
         try{
             const user = await User.findAll({
                 include:[{
@@ -216,8 +216,7 @@ const userController={
 
     async allRole(req, res, next){
 
-        //logic
-        //console.log('user control')
+ 
         try{
             const allRole = await Role.findAll({where: {name:{
                 [Op.ne]: "SuperAdmin",  
@@ -242,7 +241,7 @@ const userController={
     async editUser(req, res, next){
 
         //logic
-        console.log('merun',req.body)
+     
         try{
 
             await User.update({role:req.body.role,department:req.body.department,status:req.body.status},{where:{id:req.body.id}}).catch(err=>{

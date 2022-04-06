@@ -10,7 +10,7 @@ const loginController ={
 
     async viewMyAllReleted(req, res, next){
 
-        console.log('this is department',req.user.department);
+        
 
         
 
@@ -222,7 +222,7 @@ const loginController ={
            
 
         }catch(err){
-            console.log(err);
+          
             next(err);
         }
 
@@ -247,7 +247,7 @@ const loginController ={
     },
     async updateNotifications (req, res, next) {
         let id= req.params.id;
-        console.log(id);
+      
         try{
           let result=  await Notification.update({ status: true },{where: {operation_id:id}});
 
@@ -546,7 +546,7 @@ const loginController ={
             });
             res.json(allLocationUsers);
         }catch(e){
-            console.log(e);
+           
             next(e);
 
         }
@@ -554,7 +554,7 @@ const loginController ={
     },
 
     async AllDistribution (req, res, next) {
-        console.log('my distribution   check');
+        
 
         try{
             let allDistribution = await Distribution.findAll({
@@ -622,7 +622,7 @@ const loginController ={
     
 
         }catch(e){
-            console.log(e);
+           
             next(e);
         }
 
@@ -630,7 +630,6 @@ const loginController ={
     },
     async  myDistribution (req, res, next) {
 
-        console.log('my distribution   check');
 
         try{
             let allDistribution = await Distribution.findAll({
@@ -698,7 +697,7 @@ const loginController ={
     
 
         }catch(e){
-            console.log(e);
+           
             next(e);
 
         }
@@ -766,10 +765,10 @@ const loginController ={
                 
             );
 
-            console.log('iamindistribution',distributionDetails);
+          
             if(distributionDetails){
 
-                console.log( 'this is deistribution details',distributionDetails)
+                
                 res.json(distributionDetails);
    
 
@@ -783,7 +782,7 @@ const loginController ={
     
 
         }catch(err){
-            console.log(err);
+        
             next(err);
 
         }
@@ -1408,7 +1407,7 @@ const loginController ={
 
         }catch(err){
 
-            console.log(err);
+           
             next(err);
         }
       

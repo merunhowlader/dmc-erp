@@ -9,7 +9,7 @@ const locationController ={
 
 
     async getAll(req, res, next){
-        console.log(' location route')
+       
         try{
 
             const exist = await Location.findAll(
@@ -39,7 +39,7 @@ const locationController ={
             if(exist){
                  return next(CustomErrorHandler.alreadyExist('location alreadyExist'));
              }
-             console.log(req.body);
+            
 
              if(req.body.isSubStore){
                 const exist = await Location.findOne({where:{location_id:req.body.parentLocation}}).catch((err)=>{
@@ -85,17 +85,17 @@ const locationController ={
             const exist = await LocationType.findOne({where:{name:req.body.name}}).catch((err)=>{
                 return next(err);
             })
-            console.log('exist',exist);
+           
              if(exist){
-                 console.log(req.body.name);
+              
                  return next(CustomErrorHandler.alreadyExist('type already exist'));
              }
-             console.log(req.body);
+           
 
              await LocationType.create({name:req.body.name}).then(data=>{
                  res.json(data);
              }).catch((err)=>{
-                 console.log(err);
+               
                 return next(err);
             })
 

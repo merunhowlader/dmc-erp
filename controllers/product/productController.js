@@ -68,7 +68,7 @@ const productController ={
                 return next(err);
             })
 
-            console.log(exist);
+      
 
             //let result =await Product.findAll();
           
@@ -84,7 +84,6 @@ const productController ={
     async addProduct(req, res, next){
 
     
-        console.log(req.body);
         let product ={
             name:req.body.name,
             unit_id:req.body.unit_id,
@@ -338,11 +337,11 @@ const productController ={
                 
                 
             }).catch((err)=>{
-                console.log(err);
+                
                 return next(err);
             })
 
-            console.log(exist);
+           
           
             res.json(exist);
             
@@ -487,8 +486,7 @@ const productController ={
         let productId=req.body.product_id;
         let trackID=req.body.track_id;
         let count_type=req.body.count_type;
-
-        console.log(req.body); 
+ 
         let formData={
             expdate,
             productId,
@@ -536,7 +534,6 @@ const productController ={
             }else{
 
 
-                console.log('this is count type for this operation',count_type)
 
 
                 res.json("nonserialise are not allowed")

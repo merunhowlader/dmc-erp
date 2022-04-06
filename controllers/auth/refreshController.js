@@ -8,7 +8,7 @@ const refreshController={
 
    async refresh(req,res,next){
 
-    console.log('refresh toke body',req.body);
+
 
     const refreshSchema=Joi.object({
         refresh_token:Joi.string().required(),
@@ -35,21 +35,21 @@ const refreshController={
 
         if(!refreshtoken){
 
-            console.log(refreshtoken);
+           
 
             return next(CustomErrorHandler.invalidRefreshToken('invalid refresh token 1'));
         }
         let userId;
 
-        console.log('refresh token: ' + refreshtoken.token);
+        
         try {
 
-            console.log('refresh token try block: ' + refreshtoken.token);
+           
 
             const {id} =  JwtService.verify(refreshtoken.token,REFRESH_SECRET);
             userId=id;
 
-            console.log(' varify user: ' + id);
+           
           
            
            
@@ -65,16 +65,15 @@ const refreshController={
             return next(CustomErrorHandler.invalidRefreshToken());
         }
 
-        console.log('user was found');
+        
 
         const access_token= JwtService.sign({id:user.id,role:user.role,department:user.department});
 
         //  refresh_token= JwtService.sign({id:user.id,role:user.role,department:user.department},'1y',REFRESH_SECRET);
 
-        // console.log(' newly asign refresh token ',refresh_token);
         // const savedRefreshToken = await RefreshToken.create({token:refresh_token});
 
-        console.log('access_token',access_token);
+     
 
          res.json({access_token:access_token});
 

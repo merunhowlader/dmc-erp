@@ -11,7 +11,6 @@ import { REFRESH_SECRET } from '../../config';
 const registerController={
   async  register(req, res, next){
 
-    console.log('body',req.body);
 
         //validation
         const registerSchema = Joi.object({
@@ -29,7 +28,7 @@ const registerController={
       
 
         const {error} = registerSchema.validate(req.body);
-        console.log(error);
+
 
 
 
@@ -48,7 +47,7 @@ const registerController={
           
 
    
-            console.log('exist',exist);
+          
              if(exist){
                  return next(CustomErrorHandler.alreadyExist('this email is already taken'));
              }
@@ -60,7 +59,7 @@ const registerController={
             return next(err);
 
         }
-        console.log('test 2');
+       
 
         const hashedPassword = await bcrypt.hash(req.body.password,10).catch((err)=>{
             next(err);
@@ -79,7 +78,7 @@ const registerController={
 
         }
        
-        console.log('we are before save block',user);
+     
         let access_token;
         let refresh_token;
         try{

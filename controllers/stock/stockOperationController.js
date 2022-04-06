@@ -16,9 +16,7 @@ const stockOperationController ={
     ,
     async distribution(req, res, next){
         let allTransactionsItems=[...req.body.items];
-        console.log('distribution');
-
-        console.log('this form items',allTransactionsItems);
+       
 
        let mainOperationData ={
            from:req.body.from,
@@ -103,7 +101,7 @@ const stockOperationController ={
              
             let itemBatch =allTransactionsItems[i].track_data;
             const asyncRes = await Promise.all(itemBatch.map(async (d) => {
-                console.log('check track id',d);
+               
             await OperationTrackRecord.create({track_id:d.track_id, quantity:d.quantity,item_operation_id:newlyCreatedItem.id},{transaction: t}).catch((err)=>{
                     next(err);
                  });
@@ -120,7 +118,7 @@ const stockOperationController ={
             let itemSerial =allTransactionsItems[i].track_data;
 
             const asyncSerialRes = await Promise.all(itemSerial.map(async (d) => {
-                console.log('check track id',d);
+               
 
                 await OperationTrackRecord.create({track_id:d.track_id, quantity:1,item_operation_id:newlyCreatedItem.id},{transaction: t}).catch((err)=>{
                     t.rollback()
@@ -164,7 +162,7 @@ const stockOperationController ={
                 let checkTo= await Inventory.findOne({where:{ product_id: allTransactionsItems[i].product_id,location_id: req.body.to}}).catch(err => {
                     next(err);
                 })
-                console.log('this is check value' ,checkFrom);
+               
 
                 if(checkFrom){
                     promises.push(Inventory.update({ quantity:  sequelize.literal(`quantity - ${allTransactionsItems[i].amount}`)},{ where: { product_id: allTransactionsItems[i].product_id,location_id: req.body.from} ,transaction: t}));
@@ -214,7 +212,7 @@ const stockOperationController ={
         for(let j=0; j<AllExistSerialFrom[i].array.length ; j++){
               let exist=AllExistSerialFrom[i].array[j];
 
-              console.log('exist serial check',allTransactionsItems[index].track_data[j].track_id);
+            
 
   
               let serialNumber=allTransactionsItems[index].track_data[j].track_id;
@@ -250,7 +248,7 @@ const stockOperationController ={
           let index=AllExixtBatchTo[i].index;
           for(let j=0; j<AllExixtBatchTo[i].array.length ; j++){
             let exist=AllExixtBatchTo[i].array[j];
-            console.log('exist serial check',allTransactionsItems[index].track_data[j].track_id);
+           
             let batchNumber=allTransactionsItems[index].track_data[j].track_id;
             let quantity=  allTransactionsItems[index].track_data[j].quantity ;
             let productId= allTransactionsItems[index].product_id;
@@ -273,7 +271,7 @@ const stockOperationController ={
 
       }
 
-      console.log("to this point");
+      
 
       
 
@@ -283,10 +281,10 @@ const stockOperationController ={
      return  await Promise.all(promises)
 
     }).then(function (result) {
-        console.log("YAY");
+       
         res.status(200).json('your operation was successfully done')
     }).catch(function (err) {
-        console.log(err);
+        
         next(new Error(' something happer in sypply error'));
     });
 
@@ -296,12 +294,11 @@ const stockOperationController ={
      },
     async transfer(req, res, next){
 
-        console.log('this the user data  that we nedd',req.user);
-        console.log(req.body);
+       
 
         let allTransactionsItems=[...req.body.items];
 
-        console.log('this form items',allTransactionsItems);
+        
 
        let mainOperationData ={
            from:req.body.from,
@@ -388,7 +385,7 @@ const stockOperationController ={
                  
                 let itemBatch =allTransactionsItems[i].track_data;
                 const asyncRes = await Promise.all(itemBatch.map(async (d) => {
-                    console.log('check track id',d);
+         
                 await OperationTrackRecord.create({track_id:d.track_id, quantity:d.quantity,item_operation_id:newlyCreatedItem.id},{transaction: t}).catch((err)=>{
                         next(err);
 
@@ -408,7 +405,7 @@ const stockOperationController ={
                 let itemSerial =allTransactionsItems[i].track_data;
   
                 const asyncSerialRes = await Promise.all(itemSerial.map(async (d) => {
-                    console.log('check track id',d);
+                   
   
                     await OperationTrackRecord.create({track_id:d.track_id, quantity:1,item_operation_id:newlyCreatedItem.id},{transaction: t}).catch((err)=>{
                         t.rollback()
@@ -455,7 +452,7 @@ const stockOperationController ={
                     let checkTo= await Inventory.findOne({where:{ product_id: allTransactionsItems[i].product_id,location_id: req.body.to}}).catch(err => {
                         next(err);
                     })
-                    console.log('this is check value' ,checkFrom);
+                   
 
                     if(checkFrom){
                         promises.push(Inventory.update({ quantity:  sequelize.literal(`quantity - ${allTransactionsItems[i].amount}`)},{ where: { product_id: allTransactionsItems[i].product_id,location_id: req.body.from} ,transaction: t}));
@@ -500,7 +497,7 @@ const stockOperationController ={
             for(let j=0; j<AllExistSerialFrom[i].array.length ; j++){
                   let exist=AllExistSerialFrom[i].array[j];
 
-                  console.log('exist serial check',allTransactionsItems[index].track_data[j].track_id);
+                 
 
       
                   let serialNumber=allTransactionsItems[index].track_data[j].track_id;
@@ -540,7 +537,7 @@ const stockOperationController ={
               let index=AllExixtBatchTo[i].index;
               for(let j=0; j<AllExixtBatchTo[i].array.length ; j++){
                 let exist=AllExixtBatchTo[i].array[j];
-                console.log('exist serial check',allTransactionsItems[index].track_data[j].track_id);
+               
                 let batchNumber=allTransactionsItems[index].track_data[j].track_id;
                 let quantity=  allTransactionsItems[index].track_data[j].quantity ;
                 let productId= allTransactionsItems[index].product_id;
@@ -563,16 +560,16 @@ const stockOperationController ={
 
           }
 
-          console.log("to this point");
+         
      
           await Promise.all(promises);
           return  newOperation;
 
         }).then(function (result) {
-            console.log("YAY");
+           
             res.status(200).json('your operation was successfully done')
         }).catch(function (err) {
-            console.log(err);
+         
             next(new Error(' something happer in sypply error'));
         });
 
@@ -580,13 +577,13 @@ const stockOperationController ={
     async loan(req, res, next){
 
         
-        console.log('this is request form body',req.body.items);
+
         
         //next('new error');
         //res.json(req.body);
 
          let allTransactionsItems=[...req.body.items];
-         console.log('all items data check',allTransactionsItems);
+      
 
         let mainOperationData ={
             from:req.body.from,
@@ -676,9 +673,9 @@ const stockOperationController ={
                if(allTransactionsItems[i].count_type===2){
                  
                 let itemBatch =allTransactionsItems[i].track_data;
-                console.log('item batch test',itemBatch);
+             
                const asyncRes = await Promise.all(itemBatch.map(async (d) => {
-                   console.log('batch track data',d);
+                  
                 await OperationTrackRecord.create({track_id:d.track_id, quantity:d.quantity,item_operation_id:newlyCreatedItem.id},{transaction: t}).catch((err)=>{
                     next(err);
                  });
@@ -698,7 +695,7 @@ const stockOperationController ={
                 let itemSerial =allTransactionsItems[i].track_data;
 
                 const asyncSerialRes = await Promise.all(itemSerial.map(async (d) => {
-                    console.log('batch track data',d);
+                   
                     await OperationTrackRecord.create({track_id:d.track_id, quantity:1,item_operation_id:newlyCreatedItem.id},{transaction: t}).catch((err)=>{
                         t.rollback()
                         next(err);
@@ -716,7 +713,7 @@ const stockOperationController ={
               }
             }
 
-            console.log("to this point")
+          
     
            
 
@@ -855,10 +852,10 @@ const stockOperationController ={
           return  await Promise.all(promises);
 
         }).then(function (result) {
-            console.log("YAY");
+        
             res.status(200).json('your operation was successfully done')
         }).catch(function (err) {
-            console.log("NO!!!");
+          
             next(new Error(' Somthing Wrong happen please Try aganin'));
         });
 
@@ -866,13 +863,13 @@ const stockOperationController ={
 
     async loanReturn(req, res, next){
 
-        console.log('this is request form body',req.body);
+       
         
         //next('new error');
         //res.json(req.body);
 
          let allTransactionsItems=[...req.body.items];
-         console.log('all items data check',allTransactionsItems);
+         
 
         let mainOperationData ={
             from:req.body.from,
@@ -1096,7 +1093,7 @@ const stockOperationController ={
                     for(let j=0; j<AllExistSerialTo[i].array.length ; j++){
                           let exist=AllExistSerialTo[i].array[j];
     
-                          console.log('exist serial check',exist);
+                         
               
                           let serialNumber=allTransactionsItems[index].track_data[j].track_id;
                       
@@ -1159,10 +1156,10 @@ const stockOperationController ={
     
 
         }).then(function (result) {
-            console.log("YAY");
+            
             res.status(200).json('your operation was successfully done')
         }).catch(function (err) {
-            console.log("NO!!!");
+      
             next(new Error(' Somthing Wrong happen please Try aganin'));
         });
 
@@ -1214,9 +1211,9 @@ const stockOperationController ={
 
         const {error} =demandSchema.validate(formData);
 
-       console.error('this is error message',error);
+     
 
-       console.log(mainOperationData.operationType);
+      
 
         if(error) {
             return next(error);
@@ -1249,8 +1246,7 @@ const stockOperationController ={
                 next(err);
                 })
 
-                console.log(newOperation.operation_id);
-              
+             
 
                
 
@@ -1273,12 +1269,11 @@ const stockOperationController ={
        
           
       }).then(function (result) {
-          console.log(result);
-        console.log("YAY");
+          
+        
         res.status(200).json('your operation was successfully done')
         }).catch(function (err) {
-            console.log(err);
-            console.log("NO!!!");
+           
             next(new Error(' Somthing Wrong happen please Try aganin'));
         });
 
@@ -1286,12 +1281,12 @@ const stockOperationController ={
     
     async demandSupply(req, res, next){
 
-        console.log("in demandSupply");
+        
 
         
        
 
-        console.log(req.body)
+      
 
         if(!req.body.isCancel){
 
@@ -1389,7 +1384,7 @@ const stockOperationController ={
      
 
                if(allTransactionsItems[i].count_type===2 && (allTransactionsItems[i].amount!==0||allTransactionsItems[i].amount!==NaN)){
-                console.log('this in count type 1 ')
+              
                 let itemBatch =allTransactionsItems[i].track_data;
                 const asyncRes = await Promise.all(itemBatch.map(async (d) => {
                 await OperationTrackRecord.create({track_id:d.track_id, quantity:d.quantity,item_operation_id:newlyCreatedItem.id},{transaction: t}).catch((err)=>{
@@ -1404,7 +1399,7 @@ const stockOperationController ={
                  
               }
               if(allTransactionsItems[i].count_type===1 && (allTransactionsItems[i].amount!==0||allTransactionsItems[i].amount!==NaN)){
-                console.log('this in count type 1 ')
+               
                 let itemSerial =allTransactionsItems[i].track_data;
   
                 const asyncSerialRes = await Promise.all(itemSerial.map(async (d) => {
@@ -1444,11 +1439,11 @@ const stockOperationController ={
             //   })    
 
             
-                // console.log('merun ckeck this id',req.body.related_operation_id,newOperation);
+               
                     const newRelatedOperation=await RelatedOperation.update({react_id:newOperation.operation_id,demandStatus:"Done"},{where:{id:formData.related_operation_id,react_id:{[Op.is]: null }},transaction: t} ).catch((err)=>{
                         next(err);
                       })
-                    console.log(newRelatedOperation);
+                    
             
            
 
@@ -1459,7 +1454,7 @@ const stockOperationController ={
                     let checkTo= await Inventory.findOne({where:{ product_id: allTransactionsItems[i].product_id,location_id: req.body.to}}).catch(err => {
                         next(err);
                     })
-                    console.log('this is check value' ,checkFrom);
+                   
 
                     if(checkFrom){
                         promises.push(Inventory.update({ quantity:  sequelize.literal(`quantity - ${allTransactionsItems[i].amount}`)},{ where: { product_id: allTransactionsItems[i].product_id,location_id: req.body.from} ,transaction: t}));
@@ -1504,7 +1499,7 @@ const stockOperationController ={
             for(let j=0; j<AllExistSerialFrom[i].array.length ; j++){
                   let exist=AllExistSerialFrom[i].array[j];
 
-                  console.log('exist serial check',exist);
+                  
       
                   let serialNumber=allTransactionsItems[index].track_data[j].track_id;
               
@@ -1568,16 +1563,16 @@ const stockOperationController ={
          return  await Promise.all(promises)
 
         }).then(function (result) {
-            console.log("YAY");
+           
             res.status(200).json('your operation was successfully done')
         }).catch(function (err) {
-            console.log("NO!!!");
+          
             next(new Error(' something happer in sypply error'));
         });
 
         }else{
 
-            console.log("is calcle bock")
+           
 
             let calncleOperationData ={
                 from:req.body.from,
@@ -1611,7 +1606,7 @@ const stockOperationController ={
       
             let  releated_operation_id=req.body.releated_operation_id;
     
-            console.log(releated_operation_id);
+           
     
             await sequelize.transaction(async (t) => {
                 const newOperation = await StockOperation.create(calncleOperationData,{transaction: t}).catch((err)=>{
@@ -1629,10 +1624,10 @@ const stockOperationController ={
                 
     
             }).then(function (result) {
-                console.log("YAY");
+               
                 res.status(200).json('your operation was successfully done')
             }).catch(function (err) {
-                console.log(err);
+                
                 next(new Error(' something happer in sypply error'));
             });
     
@@ -1647,13 +1642,13 @@ const stockOperationController ={
 
    
     async supply(req, res, next){
-        console.log('this is request form body',req.body);
+       
         
         //next('new error');
         //res.json(req.body);
 
          let allTransactionsItems=[...req.body.items];
-         console.log('all items data check',allTransactionsItems);
+         
 
         let mainOperationData ={
             from:req.body.from,
@@ -1723,7 +1718,7 @@ const stockOperationController ={
               next(new Error(' fast transaction error'));
           }
 
-          console.log(" operation new data return",newOperation)
+          
           let allItem=[];
           let length=allTransactionsItems.length;
           let AllExixtBatchTo=[];
@@ -1802,8 +1797,7 @@ const stockOperationController ={
           let promises = [];
           let i=0;
 
-          console.log('serali bulk data ',AllExistSerialTo);
-          console.log('batch bulk data ',AllExixtBatchTo);
+         
 
              
 
@@ -1861,7 +1855,6 @@ const stockOperationController ={
                 for(let j=0; j<AllExistSerialTo[i].array.length ; j++){
                       let exist=AllExistSerialTo[i].array[j];
 
-                      console.log('exist serial check',exist);
           
                       let serialNumber=allTransactionsItems[index].track_data[j].track_id;
                   
@@ -1939,11 +1932,11 @@ const stockOperationController ={
 
           
       }).then(function (result) {
-          console.log("YAY");
+          
      
           res.status(200).json('your operation was successfully done')
       }).catch(function (err) {
-          console.log("NO!!!");
+       
           next(new Error(' Somthing Wrong happen please Try aganin'));
       });
 
@@ -1955,7 +1948,7 @@ const stockOperationController ={
 
         let allTransactionsItems=[...req.body.items];
 
-        console.log('this form items',allTransactionsItems);
+        
 
        let mainOperationData ={
            from:req.body.from,
@@ -2101,7 +2094,7 @@ const stockOperationController ={
                     let checkTo= await Inventory.findOne({where:{ product_id: allTransactionsItems[i].product_id,location_id: req.body.to},transaction: t}).catch(err => {
                         next(err);
                     })
-                    console.log('this is check value' ,checkFrom);
+                  
 
                     if(checkFrom){
                         promises.push(Inventory.update({ quantity:  sequelize.literal(`quantity - ${allTransactionsItems[i].amount}`)},{ where: { product_id: allTransactionsItems[i].product_id,location_id: req.body.from} ,transaction: t}));
@@ -2146,7 +2139,7 @@ const stockOperationController ={
             for(let j=0; j<AllExistSerialFrom[i].array.length ; j++){
                   let exist=AllExistSerialFrom[i].array[j];
 
-                  console.log('exist serial check',exist);
+                  
       
                   let serialNumber=allTransactionsItems[index].track_data[j].track_id;
               
@@ -2210,10 +2203,10 @@ const stockOperationController ={
          return  await Promise.all(promises)
 
         }).then(function (result) {
-            console.log("YAY");
+            
             res.status(200).json('your operation was successfully done')
         }).catch(function (err) {
-            console.log(err);
+            
             next(new Error(' something happer in sypply error'));
         });
 
@@ -2223,7 +2216,7 @@ const stockOperationController ={
 
     async inventory(req, res, next){
 
-        console.log("all inventory ");
+        
         try{
 
             const exist = await Inventory.findAll({

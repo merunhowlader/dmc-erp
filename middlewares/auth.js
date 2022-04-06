@@ -15,12 +15,12 @@ const  auth = async (req, res, next) => {
     }
 
     const token = authHeader.split(' ')[1];
-    console.log('this is auth header authorization',token);
+    
 
     try {
         const mk = JwtService.verify(token);
 
-        console.log(' what the fuck is this',mk);
+     
        
 
         const {id,role,department} = JwtService.verify(token);
@@ -41,7 +41,7 @@ const  auth = async (req, res, next) => {
         req.user.role=CurrentUser.Role.name;
         req.user.department=department;
 
-        console.log('this is user role',CurrentUser.Role.name)
+      
 
         next();
 
@@ -49,7 +49,6 @@ const  auth = async (req, res, next) => {
         return next(CustomErrorHandler.unAuthorized());
     }
 
-    console.log(token);
 
 }
 

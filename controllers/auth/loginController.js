@@ -9,7 +9,6 @@ const loginController ={
 
     async login (req, res, next) {
 
-        console.log(' body', req.body);
 
 
      
@@ -48,7 +47,7 @@ const loginController ={
 
            const  refresh_token= JwtService.sign({id:user.id,role:user.role,department:user.department},'1y',REFRESH_SECRET);
 
-            console.log(' newly asign refresh token ',refresh_token);
+          
             const savedRefreshToken = await RefreshToken.create({token:refresh_token}).then((data)=>{
 
                 res.json({access_token:access_token,refresh_token});
@@ -73,7 +72,7 @@ const loginController ={
     },
 
     async logout(req,res, next){
-        console.log('log out chekck',req.body);
+        
         const refreshSchema=Joi.object({
             refresh_token:Joi.string().required(),
            

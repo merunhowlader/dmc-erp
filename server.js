@@ -36,17 +36,7 @@ app.use(cors(corsOpts));
 app.use('/api/v1/',routes);
 
 
-// try {
-//   db.sequelize.sync({ alter: true,force: true }).then(() => {
-//     console.log("Drop and re-sync db.");
-//   }).catch(err =>{
-//     console.log(err);
-//   });
 
-// }catch(err) {
-//   console.log("some this wrong happen in sequelize");
-
-// }
 
 
 app.post('/send-notification', (req, res) => {
@@ -74,5 +64,5 @@ const socket = require('socket.io')(server);
 global.socket = socket;
 // On every Client Connection
 socket.on('connection', socket => {
-    console.log('Socket: client connected');
+    
 });

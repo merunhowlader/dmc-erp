@@ -12,8 +12,7 @@ const  contentPermission = async (req, res, next) => {
 
         if(req.user.role!== 'SuperAdmin' ){
 
-            console.log(' form djlkf',req.body.from ,req.user.department)
-            console.log(' form djlkf',req.body.to ,req.user.department)
+           
 
             if(req.body.from===req.body.to){
                 return next(CustomErrorHandler.unAuthorizedPermission());
@@ -50,7 +49,7 @@ const  contentPermission = async (req, res, next) => {
         return next(CustomErrorHandler.unAuthorizedPermission());
     }
 
-    console.log(token);
+
 
 }
 

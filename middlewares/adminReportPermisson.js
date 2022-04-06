@@ -23,7 +23,7 @@ const  adminReportPermisson = async (req, res, next) => {
         return next(CustomErrorHandler.unAuthorizedPermission());
     }
 
-    console.log(token);
+  
 
 }
 

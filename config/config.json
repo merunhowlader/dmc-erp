@@ -2,9 +2,10 @@
   "development": {
     "username": "dmcinv",
     "password": "vbABcQoIWfVaOQSQ",
-    "database": "defaultdb",
+    "database": "dmcinventory",
     "host": "db-postgresql-sgp1-37192-do-user-1794786-0.b.db.ondigitalocean.com",
     "dialect": "postgres",
+    "port":"25060",
     "dialectOptions": {
       "ssl": {
         "rejectUnauthorized": false
@@ -14,9 +15,10 @@
   "test": {
     "username": "dmcinv",
     "password": "vbABcQoIWfVaOQSQ",
-    "database": "defaultdb",
+    "database": "dmcinventory",
     "host": "db-postgresql-sgp1-37192-do-user-1794786-0.b.db.ondigitalocean.com",
     "dialect": "postgres",
+    "port":"25060",
     "dialectOptions": {
       "ssl": {
         "rejectUnauthorized": false
@@ -26,9 +28,10 @@
   "production": {
     "username": "dmcinv",
     "password": "vbABcQoIWfVaOQSQ",
-    "database": "defaultdb",
+    "database": "dmcinventory",
     "host": "db-postgresql-sgp1-37192-do-user-1794786-0.b.db.ondigitalocean.com",
     "dialect": "postgres",
+    "port":"25060",
     "dialectOptions": {
       "ssl": {
         "rejectUnauthorized": false
