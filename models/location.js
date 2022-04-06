@@ -58,6 +58,7 @@ module.exports = (sequelize, DataTypes) => {
   Location.init({
     location_id:{
       type:DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey:true,
     },
     name: DataTypes.STRING,

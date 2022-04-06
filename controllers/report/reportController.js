@@ -1114,6 +1114,7 @@ const loginController ={
              
  
          }catch(err){
+             console.log(err);
              next(err);
          }
       
@@ -1395,17 +1396,18 @@ const loginController ={
            let allProduct=await Product.count();
             let allLocations=await Location.count();
            let  allOperations=await StockOperation.count();
-           let graphData= await StockOperation.findAll({attributes: [[ sequelize.fn('MONTH', sequelize.col('createdAt')), 'data']] });
+        //    let graphData= await StockOperation.findAll({attributes: [[ sequelize.fn('MONTH', sequelize.col('createdAt')), 'data']] });
+     
+         
+                res.json({allUsers:allUsers,allProduct:allProduct,allLocations:allLocations,allOperations:allOperations});
 
-            if(allOperations&&allUsers&&allProduct&&allLocations){
-                res.json({allUsers:allUsers,allProduct:allProduct,allLocations:allLocations,allOperations:allOperations,graphData:graphData});
-
-            }
+            
 
 
 
 
         }catch(err){
+            console.log('allcout error',err);
 
            
             next(err);

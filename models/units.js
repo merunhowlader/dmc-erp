@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
   Units.init({
     unit_id:{
       type:DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey:true
 
 

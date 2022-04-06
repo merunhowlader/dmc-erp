@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       type:DataTypes.INTEGER,
       primaryKey:true,
       autoIncrement: true,
+      
     },
     act_id: DataTypes.INTEGER,
     demand_operation: DataTypes.STRING,

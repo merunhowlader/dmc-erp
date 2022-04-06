@@ -51,6 +51,7 @@ Product.belongsTo(models.Location,{
   Product.init({
     product_id:{
       type:DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey:true,
     },
     name: DataTypes.STRING,
