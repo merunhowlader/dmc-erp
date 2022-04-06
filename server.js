@@ -21,9 +21,13 @@ app.use(express.json());
 // }
 
 
+// const corsOpts = {
+//   origin: true,
+//   credentials:true,
+
+// };
 const corsOpts = {
-  origin: true,
-  credentials:true,
+  credentials: true, origin: true, exposedHeaders: '*'
 
 };
 
