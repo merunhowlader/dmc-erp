@@ -6,6 +6,7 @@
     "host": "db-postgresql-sgp1-37192-do-user-1794786-0.b.db.ondigitalocean.com",
     "dialect": "postgres",
     "port":"25060",
+    "sslmode" : "require",
     "dialectOptions": {
       "ssl": {
         "rejectUnauthorized": false
