@@ -269,7 +269,15 @@ const loginController ={
             location_id= req.params.id;
 
         }else{
-            location_id=req.user.department;
+
+            if(req.params.id!==null){
+                location_id= req.params.id;
+
+            }else{
+                location_id=req.user.department;
+                
+            }
+            
 
         }
 
