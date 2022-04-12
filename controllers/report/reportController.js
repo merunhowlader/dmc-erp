@@ -1221,6 +1221,10 @@ const loginController ={
                                 as:'To'
                                 
                                 
+                            },
+                            {
+                                model:User,
+                                attributes:['name','phone'],
                             }
                         ],
                            
@@ -1259,7 +1263,11 @@ const loginController ={
                             as:'To'
                             
                             
-                        }
+                        },
+                         {
+                                model:User,
+                                attributes:['name','phone'],
+                         }
                     ],
                        
                          required: false,    
