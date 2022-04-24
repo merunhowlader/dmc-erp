@@ -2281,6 +2281,279 @@ const stockOperationController ={
             next(err);
         }
     },
+
+    //adjustment inventory
+
+    async adjustment(req, res, next){
+       
+
+         let allTransactionsItems=[...req.body.items];
+         let adjustment=req.body.adjustment;
+         
+
+        let mainOperationData ={
+            from:req.body.from,
+            to:req.body.to,
+            reference:req.body.reference,
+            createdBy:req.user.id,
+            operationType:"adjustment increament"
+           
+        }
+
+        let formData={
+            from:req.body.from,
+            to:req.body.to,
+            reference:req.body.reference,
+            createdBy:req.user.id,
+            operationType:adjustment,
+            items:req.body.items
+        }
+
+
+
+
+            
+        const adjustmentSchema=Joi.object({
+            from:Joi.number().integer().required(),
+            to:Joi.number().integer().disallow(Joi.ref('from')).required(),
+            reference: Joi.string().allow(""),
+            operationType:Joi.string().allow(""),
+            createdBy:Joi.number().integer().required(),
+            items: Joi.array().items(Joi.object().keys(
+                {product_id:Joi.number().integer().required(),
+                 item_name:Joi.string(),
+                 unit:Joi.string(),
+                 amount:Joi.number().integer().required(),
+                 count_type: Joi.number().integer().required(),
+                 track_data:Joi.array().items(Joi.object().keys({
+                    track_id:Joi.string().required(),
+                    quantity:Joi.number().integer().required(),
+                 }).when('count_type', { is: 0, then: Joi.optional(), otherwise: Joi.required() })
+                 )
+                }).min(1)).required()
+           
+            
+
+        })
+
+        const {error} =adjustmentSchema.validate(formData);
+
+        if(error) {
+            return next(error);
+        }
+
+        let t;
+        
+        await sequelize.transaction(async (t) => {
+
+            
+
+
+          const newOperation = await StockOperation.create(mainOperationData,{transaction: t}).catch((err)=>{
+              t.rollback()
+              next(err);
+          });
+      
+          if(!newOperation){
+              next(new Error(' fast transaction error'));
+          }
+
+          
+          let allItem=[];
+          let length=allTransactionsItems.length;
+          let AllExixtBatchTo=[];
+
+          let AllExistSerialTo=[];
+
+
+          for(let i=0; i<length;i++){
+             let itemData={
+                 product_id:allTransactionsItems[i].product_id,
+                 quantity:allTransactionsItems[i].amount,
+                 stockOperationId:newOperation.operation_id
+            
+             }
+             allItem.push(itemData);
+
+            let newlyCreatedItem= await StockOperationItem.create(itemData,{transaction: t}).catch((err)=>{
+              t.rollback()
+              next(err);
+           });
+      
+
+
+             if(allTransactionsItems[i].count_type===2){
+              
+              let itemBatch =allTransactionsItems[i].track_data;
+             const asyncRes = await Promise.all(itemBatch.map(async (d) => {
+              await OperationTrackRecord.create({track_id:d.track_id, quantity:d.quantity,item_operation_id:newlyCreatedItem.id},{transaction: t}).catch((err)=>{
+                  next(err);
+               });
+      
+             const checkDataExistTo=await ProductBatch.findOne( {where:{[Op.and]:[{product_id:allTransactionsItems[i].product_id},{batch_number:d.track_id}]}}).catch((err)=>{
+                                     t.rollback()
+                                     next(err);
+                         })
+              
+                  return checkDataExistTo;
+
+                 }));
+             AllExixtBatchTo.push({index:i,array:asyncRes});    
+               
+            }
+
+            if(allTransactionsItems[i].count_type===1){
+               
+              let itemSerial =allTransactionsItems[i].track_data;
+
+              const asyncSerialRes = await Promise.all(itemSerial.map(async (d) => {
+
+                  await OperationTrackRecord.create({track_id:d.track_id, quantity:1,item_operation_id:newlyCreatedItem.id},{transaction: t}).catch((err)=>{
+                      t.rollback()
+                      next(err);
+                   });
+
+                  
+                  const checkDataExistTo=await ProductSerialised.findOne({where:{[Op.and]:[{product_id:allTransactionsItems[i].product_id},{serial_number:d.track_id}]}}).catch((err)=>{
+                      t.rollback()
+                          next(err);
+                          })
+               
+                   return checkDataExistTo;
+
+                  }));
+              AllExistSerialTo.push({index:i,array:asyncSerialRes});   
+            
+               
+            }
+          }
+          //    const allitemCreate=await StockOperationItem.bulkCreate(allItem).catch((err)=>{
+          //              next(err);
+          //     })
+
+          //     console.log(allitemCreate);
+             
+
+          let promises = [];
+          let i=0;
+
+         
+
+             
+
+          
+         
+
+          for ( i; i < allTransactionsItems.length ; i++) {
+
+                  let checkTo= await Inventory.findOne({where:{ product_id: allTransactionsItems[i].product_id,location_id: req.body.to}}).catch(err => {
+                      t.rollback()
+                      next(err);
+                      })
+
+                 
+
+                  if(checkTo){
+                      promises.push(Inventory.update({ quantity:  sequelize.literal(`quantity + ${allTransactionsItems[i].amount}`)},{ where: { product_id: allTransactionsItems[i].product_id,location_id: req.body.to},transaction: t }));
+
+                  }else{
+                      promises.push( Inventory.create({ product_id: allTransactionsItems[i].product_id,location_id: req.body.to,quantity:allTransactionsItems[i].amount},{transaction: t}))
+
+                  }     
+              
+           }
+
+
+
+           for(let i=0; i<AllExistSerialTo.length; i++){
+         
+                let index=AllExistSerialTo[i].index;
+
+
+                for(let j=0; j<AllExistSerialTo[i].array.length ; j++){
+                      let exist=AllExistSerialTo[i].array[j];
+
+          
+                      let serialNumber=allTransactionsItems[index].track_data[j].track_id;
+                  
+                      let productId= allTransactionsItems[index].product_id;
+                      let locationIdTo=req.body.to;
+                      let locationIdFrom=req.body.from;
+                      
+                      if(exist){   
+                          promises.push(ProductSerialised.update({ location_id:locationIdTo},{where:{serial_number:serialNumber },transaction: t}))
+              
+                      }       
+                      else{
+                          promises.push(ProductSerialised.create({ serial_number: serialNumber, product_id: productId,location_id:locationIdTo},{transaction: t})); 
+                      }
+  
+                }
+  
+            }
+
+        
+
+          
+
+
+        for(let i=0; i<AllExixtBatchTo.length; i++){
+          //   console.log('i',i);
+          //   console.log(AllExixtBatchTo);
+          //   console.log(AllExixtBatchTo[i].index);
+          //   console.log(AllExixtBatchTo[i].array);
+            let index=AllExixtBatchTo[i].index;
+            for(let j=0; j<AllExixtBatchTo[i].array.length ; j++){
+              let exist=AllExixtBatchTo[i].array[j];
+              //console.log(exist);
+              let batchNumber=allTransactionsItems[index].track_data[j].track_id;
+              let quantity=  allTransactionsItems[index].track_data[j].quantity ;
+              let productId= allTransactionsItems[index].product_id;
+              let locationIdTo=req.body.to;
+              let locationIdFrom=req.body.from;
+              
+               if(exist){   
+                
+                   promises.push(ProductBatch.update({ quantity:sequelize.literal(`quantity + ${quantity}`)},{where:{[Op.and]:[{product_id:allTransactionsItems[i].product_id},{batch_number:d.track_id},{location_id:locationIdTo}]},transaction: t}))
+      
+               }       
+               else{
+                  promises.push(ProductBatch.create({ batch_number: batchNumber, product_id: productId,location_id:locationIdTo,quantity:quantity},{transaction: t})); 
+               }
+
+             
+
+              
+
+            }
+
+        }
+
+        await Notification.create({notice:`new adjustment was done operation id ${newOperation.operation_id} `,operation_id:newOperation.operation_id,status:false})
+
+        global.socket.emit('merun', {notice:`new adjustment was done operation id ${newOperation.operation_id} `,operation_id:newOperation.operation_id,status:false});
+   
+
+  
+   
+        return await Promise.all(promises)
+
+  
+
+          
+      }).then(function (result) {
+          
+     
+          res.status(200).json('your operation was successfully done')
+      }).catch(function (err) {
+       
+          next(new Error(' Somthing Wrong happen please Try aganin'));
+      });
+
+      
+
+
+    },
   
 
 
