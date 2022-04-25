@@ -2543,6 +2543,8 @@ const stockOperationController ={
      
           res.status(200).json('your operation was successfully done')
       }).catch(function (err) {
+
+        console.log(err);
        
           next(new Error(' Somthing Wrong happen please Try aganin'));
       });
