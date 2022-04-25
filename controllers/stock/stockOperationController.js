@@ -2344,7 +2344,7 @@ const stockOperationController ={
 
 
           const newOperation = await StockOperation.create(mainOperationData,{transaction: t}).catch((err)=>{
-              t.rollback()
+            
               next(err);
           });
       
@@ -2370,7 +2370,7 @@ const stockOperationController ={
              allItem.push(itemData);
 
             let newlyCreatedItem= await StockOperationItem.create(itemData,{transaction: t}).catch((err)=>{
-              t.rollback()
+           
               next(err);
            });
       
@@ -2385,7 +2385,7 @@ const stockOperationController ={
                });
       
              const checkDataExistTo=await ProductBatch.findOne( {where:{[Op.and]:[{product_id:allTransactionsItems[i].product_id},{batch_number:d.track_id}]}}).catch((err)=>{
-                                     t.rollback()
+                                   
                                      next(err);
                          })
               
@@ -2403,13 +2403,13 @@ const stockOperationController ={
               const asyncSerialRes = await Promise.all(itemSerial.map(async (d) => {
 
                   await OperationTrackRecord.create({track_id:d.track_id, quantity:1,item_operation_id:newlyCreatedItem.id},{transaction: t}).catch((err)=>{
-                      t.rollback()
+                     
                       next(err);
                    });
 
                   
                   const checkDataExistTo=await ProductSerialised.findOne({where:{[Op.and]:[{product_id:allTransactionsItems[i].product_id},{serial_number:d.track_id}]}}).catch((err)=>{
-                      t.rollback()
+           
                           next(err);
                           })
                
@@ -2437,7 +2437,7 @@ const stockOperationController ={
           for ( i; i < allTransactionsItems.length ; i++) {
 
                   let checkTo= await Inventory.findOne({where:{ product_id: allTransactionsItems[i].product_id,location_id: req.body.to}}).catch(err => {
-                      t.rollback()
+                    
                       next(err);
                       })
 
@@ -2634,7 +2634,7 @@ const stockOperationController ={
                }
               
                let newlyCreatedItem= await StockOperationItem.create(itemData,{transaction: t}).catch((err)=>{
-                t.rollback()
+               
                 next(err);
              });
 
@@ -2660,13 +2660,13 @@ const stockOperationController ={
                 const asyncSerialRes = await Promise.all(itemSerial.map(async (d) => {
   
                     await OperationTrackRecord.create({track_id:d.track_id, quantity:1,item_operation_id:newlyCreatedItem.id},{transaction: t}).catch((err)=>{
-                        t.rollback()
+                      
                         next(err);
                      });
   
                     
                     const checkDataExistTo=await ProductSerialised.findOne({where:{[Op.and]:[{product_id:allTransactionsItems[i].product_id},{serial_number:d.track_id}]}} ).catch((err)=>{
-                        t.rollback()
+                     
                             next(err);
                             })
                  
