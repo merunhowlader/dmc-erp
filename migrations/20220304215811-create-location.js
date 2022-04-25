@@ -69,6 +69,11 @@ module.exports = {
         type:2
        
       },
+      {
+        name: "Adjustment",
+        type:6
+       
+      },
       ]);
        });
   },

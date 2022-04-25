@@ -61,7 +61,11 @@ Product.belongsTo(models.Location,{
     count_type: DataTypes.INTEGER,
     price: DataTypes.DECIMAL,
     category_id: DataTypes.INTEGER,
-    returnable_product: DataTypes.BOOLEAN
+    returnable_product: DataTypes.BOOLEAN,
+    isActiveProduct:{
+      type:DataTypes.BOOLEAN,
+      defaultValue:true
+    }
   }, {
     sequelize,
     modelName: 'Product',

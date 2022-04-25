@@ -44,6 +44,10 @@ module.exports = {
       returnable_product: {
         type: Sequelize.BOOLEAN
       },
+     isActiveProduct: {
+        type: Sequelize.BOOLEAN,
+        defaultValue:true
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

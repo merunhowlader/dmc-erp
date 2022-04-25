@@ -17,6 +17,8 @@ operationRoute.post('/demand',stockOperationController.demand);
 operationRoute.post('/demandsupply',stockOperationController.demandSupply);
 operationRoute.post('/distribution',stockOperationController.distribution);
 operationRoute.post('/trash',stockOperationController.trash);
+operationRoute.post('/increament',stockOperationController.adjustIncrement);
+operationRoute.post('/decrement',stockOperationController.adjustDecrement);
 
 
 //non amdmin

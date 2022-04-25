@@ -40,6 +40,10 @@ module.exports = {
         name: "Trash",
        
       },
+      {
+        name: "Adjustment",
+       
+      },
       ]);
        });
   },
