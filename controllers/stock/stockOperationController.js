@@ -2443,6 +2443,14 @@ const stockOperationController ={
                       next(err);
                       })
 
+                      let checkFrom= await Inventory.findOne({where:{ product_id: allTransactionsItems[i].product_id,location_id: req.body.from},transaction: t}).catch(err => {
+                        next(err);
+                    })
+                
+                  
+
+                 
+
                  
 
                   if(checkTo){
@@ -2452,6 +2460,13 @@ const stockOperationController ={
                       promises.push( Inventory.create({ product_id: allTransactionsItems[i].product_id,location_id: req.body.to,quantity:allTransactionsItems[i].amount},{transaction: t}))
 
                   }
+                  if(checkFrom){
+                    promises.push(Inventory.update({ quantity:  sequelize.literal(`quantity + ${allTransactionsItems[i].amount}`)},{ where: { product_id: allTransactionsItems[i].product_id,location_id: req.body.from} ,transaction: t}));
+
+                }else{
+                    promises.push( Inventory.create({ product_id: allTransactionsItems[i].product_id,location_id: req.body.from,quantity:-allTransactionsItems[i].amount},{transaction: t}))
+
+                }
 
 
               
