@@ -150,11 +150,6 @@ const stockOperationController ={
         let i=0;
 
 
-        
-
-  
-       
-
         for ( i; i < allTransactionsItems.length ; i++) {
                 let checkFrom= await Inventory.findOne({where:{ product_id: allTransactionsItems[i].product_id,location_id: req.body.from}}).catch(err => {
                     next(err);
@@ -2199,6 +2194,9 @@ const stockOperationController ={
               }
 
           }
+          await Notification.create({notice:`new trush was done operation id ${newOperation.operation_id} `,operation_id:newOperation.operation_id,status:false})
+
+        global.socket.emit('merun', {notice:`new trush was done operation id ${newOperation.operation_id} `,operation_id:newOperation.operation_id,status:false});
      
          return  await Promise.all(promises)
 

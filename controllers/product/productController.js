@@ -173,6 +173,67 @@ const productController ={
             }
         //res.json(" get all products");
     },
+    async editProduct(req, res, next){
+
+    
+        let updateProduct ={
+            name:req.body.name,
+            unit_id:req.body.unit_id,
+            category_id:req.body.category_id,
+            returnable_product:req.body.returnable_product,
+            isActiveProduct:req.body.isActiveProduct
+           
+        }
+
+        const productSchema=Joi.object({
+            name:Joi.string().required(),
+            unit_id:Joi.number().integer().required(),
+            category_id:Joi.number().integer(),
+            returnable_product:Joi.boolean().required(),
+            isActiveProduct:Joi.boolean().required(),
+ 
+        })
+ 
+        const {error} =productSchema.validate(updateProduct);
+ 
+       console.error('product update error',error);
+ 
+        if(error) {
+            return next(error);
+        }
+ 
+
+        try{
+      
+
+            const alreadyExist = await Product.findOne({product_id:req.body.product_id}).catch((err)=>{
+                 
+                next(err);
+            });
+
+            if(!alreadyExist){
+                res.json('product dont exists')
+            }else{
+
+            const newProduct = await Product.update(updateProduct,{ where: { product_id:req.body.product_id }}).catch((err)=>{
+                 
+                next(err);
+            });
+        
+            if(!newProduct){
+                next(new Error(' product update error'));
+            }
+            res.json('product updated successfully')
+
+
+            }  
+      
+          }catch(err){
+              next(err);
+        }
+        //res.json(" get all products");
+    },
+    
     
      
     async getUnit (req, res, next){
