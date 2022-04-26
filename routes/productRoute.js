@@ -27,6 +27,10 @@ productRouter.get('/trackingnumber',productController.getTrackingNumber);
 productRouter.post('/trackingnumber',productController.addTrackingNumber);
 
 
+//edit product
+productRouter.put('/',productController.editProduct);
+
+
 
 
 export default productRouter;

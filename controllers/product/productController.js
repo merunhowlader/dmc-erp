@@ -37,6 +37,7 @@ const productController ={
                 {
                
                 attributes: [['product_id','id'], ['name', 'title'],'count_type','sku','root'],
+                where: {isActiveProduct:{[Op.eq]:true}},
                 include:[
                 {
                     model: Category,
@@ -179,16 +180,17 @@ const productController ={
         let updateProduct ={
             name:req.body.name,
             unit_id:req.body.unit_id,
-            category_id:req.body.category_id,
+            root:req.body.location_id,
             returnable_product:req.body.returnable_product,
             isActiveProduct:req.body.isActiveProduct
            
         }
 
         const productSchema=Joi.object({
+            product_id:Joi.number().integer(),
             name:Joi.string().required(),
+            root:Joi.number().integer(),
             unit_id:Joi.number().integer().required(),
-            category_id:Joi.number().integer(),
             returnable_product:Joi.boolean().required(),
             isActiveProduct:Joi.boolean().required(),
  

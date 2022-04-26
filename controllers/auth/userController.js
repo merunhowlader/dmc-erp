@@ -331,6 +331,62 @@ const userController={
 
     },
 
+    async editUserEmail(req, res, next){
+
+        //logic
+
+        const emailSchema = Joi.object({
+            id: Joi.number().integer().required(),
+            email:Joi.string().email().required(),
+
+        })
+
+      
+
+        const {error} = emailSchema.validate(req.body);
+
+
+
+
+       
+
+        if(error){
+            return next(error);
+        }
+     
+        try{
+
+            const exist = await User.findOne({where:{email:req.body.email}}).catch((err)=>{
+                return next(err);
+            })
+          
+
+             if(exist){
+                 return next(CustomErrorHandler.alreadyExist('this email is already taken'));
+             }
+
+            await User.update({email:req.body.email},{where:{id:req.body.id}}).then((data)=>{
+                res.json('updated successfully')
+
+            }).catch(err=>{
+                console.error(err);
+                next(err);
+            })
+
+
+          
+           
+
+
+        }catch(err){
+
+            return next(err);
+
+        }
+
+    }
+    ,
+
     // async forgotPassword(req, res, next){
 
     //     try{

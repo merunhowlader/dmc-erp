@@ -2,6 +2,7 @@ import express from 'express';
 const router = express.Router();
 import {registerController,loginController,userController,refreshController, reportController} from '../controllers';
 import auth from '../middlewares/auth';
+import superAdminPermission from '../middlewares/superAdminPermission';
 import operationPermission from '../middlewares/operationPermission';
 import productRoute from './productRoute';
 import operationRoute from './operationRoute';
@@ -14,6 +15,10 @@ import contentPermission from '../middlewares/contentPermission';
  router.post('/login',loginController.login);
  router.post('/',loginController.login);
  router.post('/editpassword',auth,userController.editUserPassword);
+
+ router.put('/edit-email',auth,superAdminPermission,userController. editUserEmail);
+
+
 
  router.post('/forgotpassword',userController.forgotPassword);
  router.post('/resetforgetpassword',userController.resetforgetPassword);
