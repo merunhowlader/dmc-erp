@@ -18,6 +18,7 @@ productRouter.get('/unit',productController.getUnit);
 productRouter.post('/unit',productController.addUnit);
 
 
+
 productRouter.post('/experation',productController.addProductExperations);
 productRouter.get('/experation',productController.getProductExperation);
 
@@ -27,7 +28,9 @@ productRouter.get('/trackingnumber',productController.getTrackingNumber);
 productRouter.post('/trackingnumber',productController.addTrackingNumber);
 
 
+
 //edit product
+productRouter.get('/all',productController.getProductsForEdit);
 productRouter.put('/',productController.editProduct);
 
 

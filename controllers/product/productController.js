@@ -81,6 +81,49 @@ const productController ={
             }
 
     },
+    async getProductsForEdit (req,res, next){
+        try{
+
+            const exist = await Product.findAll(
+                {
+    
+                include:[
+                {
+                    model: Category,
+                    required: false,   
+                }
+                 ,
+                {
+                    model: Units,
+                    attributes:['name'],
+                  
+                    required: false, 
+                },
+                {
+                    model: Location,
+                  
+                  
+                    required: false, 
+                }
+            ], 
+                required: false, 
+                
+            }).catch((err)=>{
+                return next(err);
+            })
+
+      
+
+            //let result =await Product.findAll();
+          
+            res.json(exist);
+            
+      
+          }catch(err){
+              next(err);
+            }
+
+    },
 
     async addProduct(req, res, next){
 
