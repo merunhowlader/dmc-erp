@@ -95,7 +95,7 @@ const productController ={
                  ,
                 {
                     model: Units,
-                    attributes:['name'],
+                   
                   
                     required: false, 
                 },
