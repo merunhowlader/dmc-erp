@@ -21,11 +21,30 @@ module.exports = {
       }
     }).then(() => {
       queryInterface.bulkInsert("Categories", [{
-              name: "ict",
+              name: "ICT",
           
           },
           {
-              name: "oxyzen",
+              name: "Oxyzen",
+              
+          },
+          {
+              name: "Chemical",
+              
+          }
+          ,
+          {
+              name: "Medicine",
+              
+          }
+          ,
+          {
+              name: "Linen",
+              
+          }
+          ,
+          {
+              name: "General",
               
           }
       ]);

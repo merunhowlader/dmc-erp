@@ -32,6 +32,14 @@ module.exports = {
               name: "piece",
              
           },
+          {
+            name: "ml",
+           
+         },
+          {
+            name: "gm",
+           
+         },
       ]);
        });
      

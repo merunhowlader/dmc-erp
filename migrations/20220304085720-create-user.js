@@ -47,7 +47,7 @@ module.exports = {
       }
     }).then(() => {
       queryInterface.bulkInsert("Users", [{
-        name: "Merun",
+        name: "Super Admin",
         phone:"0171",
         email:"merunhowlader@gmail.com",
         password:"$2a$10$jKpO0ShCE8oO6j4xl589fuJaXpDcIzkjlBAWHvRTdLefLW0BWb6c.",
@@ -60,7 +60,7 @@ module.exports = {
           
           },
           {
-            name: "Merun",
+            name: "Admin",
             phone:"01890369176",
             email:"merun.kh@gmail.com",
             password:"$2a$10$jKpO0ShCE8oO6j4xl589fuJaXpDcIzkjlBAWHvRTdLefLW0BWb6c.",

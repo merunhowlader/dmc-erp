@@ -50,22 +50,52 @@ module.exports = {
              
           },
           {
-            name: "ict Store",
+            name: "ICT Store",
             type:1
            
         },
         {
-          name: "medicine Store",
+          name: "Medicine Store",
           type:1
          
         },
         {
-          name: "Ward One",
+          name: "Chemical Store",
+          type:1
+         
+        },
+        {
+          name: "General Store",
+          type:1
+         
+        },
+        {
+          name: "Linen Store",
+          type:1
+         
+        },
+        {
+          name: "Front Store",
+          type:1
+         
+        },
+        {
+          name: "Ward 100",
           type:2
          
       },
       {
-        name: "Ward Two",
+        name: "Ward 101",
+        type:2
+       
+      },
+      {
+        name: "Ward 102",
+        type:2
+       
+      },
+      {
+        name: "Ward 103",
         type:2
        
       },
