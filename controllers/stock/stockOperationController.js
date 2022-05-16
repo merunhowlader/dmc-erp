@@ -1378,7 +1378,7 @@ const stockOperationController ={
 
      
 
-               if(allTransactionsItems[i].count_type===2 && (allTransactionsItems[i].amount!==0||allTransactionsItems[i].amount!==NaN)){
+               if(allTransactionsItems[i].count_type===2 ){
               
                 let itemBatch =allTransactionsItems[i].track_data;
                 const asyncRes = await Promise.all(itemBatch.map(async (d) => {
@@ -1393,7 +1393,7 @@ const stockOperationController ={
                AllExixtBatchTo.push({index:i,array:asyncRes});    
                  
               }
-              if(allTransactionsItems[i].count_type===1 && (allTransactionsItems[i].amount!==0||allTransactionsItems[i].amount!==NaN)){
+              if(allTransactionsItems[i].count_type===1 ){
                
                 let itemSerial =allTransactionsItems[i].track_data;
   
@@ -1487,6 +1487,7 @@ const stockOperationController ={
 
           
            for(let i=0; i<AllExistSerialFrom.length; i++){
+
          
             let index=AllExistSerialFrom[i].index;
 
