@@ -21,18 +21,18 @@ app.use(express.json());
 // }
 
 
-// const corsOpts = {
-//   origin: true,
-//   credentials:true,
-
-// };
 const corsOpts = {
-    credentials: true,
-    preflightContinue: true,
-    methods: ['GET', 'POST', 'PUT'],
-    origin: true
+  origin: true,
+  credentials:true,
 
 };
+// const corsOpts = {
+//     credentials: true,
+//     preflightContinue: true,
+//     methods: ['GET', 'POST', 'PUT'],
+//     origin: true
+
+// };
 
 app.use(cors(corsOpts));
 app.use('/api/v1/',routes);
