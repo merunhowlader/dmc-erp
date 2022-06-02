@@ -87,7 +87,7 @@ const userController={
          let newToken= await ForgotToken.create({user_id:user.id,tem_token:token})
 
 
-         await  sendEmail(req.body.email,'bindulogic invenotry Forget Password ',`This email is from Bindulogic inventory,this is your password changing link click the link to chang password link:  https://dmc-inventory.bindubit.com/forgot-password-reset/${newToken.user_id}/${newToken.tem_token} ,use this code to reset your password`);
+         await  sendEmail(req.body.email,'bindulogic invenotry Forget Password ',`This email is from Bindulogic inventory,this is your password changing link click the link to chang password link:  https://dmc-inv-test.netlify.app/forgot-password-reset/${newToken.user_id}/${newToken.tem_token} ,use this code to reset your password`);
   
 
          
